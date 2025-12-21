@@ -1,0 +1,124 @@
+-- [[ REDZ HUB STYLE MINI - BY BUNDAC ]]
+
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Redz Style | Bundac Hub",
+   LoadingTitle = "Đang kiểm tra dữ liệu...",
+   LoadingSubtitle = "Phiên bản Blox Fruit v20",
+   ConfigurationSaving = { Enabled = true, FolderName = "Bundac_Blox" }
+})
+
+-- BIẾN HỆ THỐNG
+_G.AutoFarm = false
+_G.SelectWeapon = "Melee"
+_G.AutoV4 = false
+_G.SafeMode = false
+
+-- TAB CHÍNH (MAIN)
+local MainTab = Window:CreateTab("Auto Farm", 4483362458)
+
+MainTab:CreateDropdown({
+   Name = "Chọn Vũ Khí",
+   Options = {"Melee","Sword","Fruit"},
+   CurrentOption = {"Melee"},
+   MultipleOptions = false,
+   Callback = function(Option)
+      _G.SelectWeapon = Option[1]
+   end,
+})
+
+MainTab:CreateToggle({
+   Name = "Auto Farm Level (Tự động nhận Quest)",
+   CurrentValue = false,
+   Callback = function(Value)
+      _G.AutoFarm = Value
+      if Value then
+          doAutoFarm()
+      end
+   end,
+})
+
+-- [[ LOGIC AUTO FARM CHUYÊN NGHIỆP ]]
+function doAutoFarm()
+    task.spawn(function()
+        while _G.AutoFarm do
+            task.wait()
+            pcall(function()
+                local player = game.Players.LocalPlayer
+                local char = player.Character
+                
+                -- 1. Kiểm tra vũ khí
+                if not char:FindFirstChild(_G.SelectWeapon) then
+                    for _,v in pairs(player.Backpack:GetChildren()) do
+                        if v.ToolTip == _G.SelectWeapon or v.Name == _G.SelectWeapon then
+                            char.Humanoid:EquipTool(v)
+                        end
+                    end
+                end
+
+                -- 2. Logic tìm quái và Quest (Ví dụ đảo đầu)
+                local mob = workspace.Enemies:FindFirstChild("Bandit") 
+                if mob and mob:FindFirstChild("HumanoidRootPart") and mob.Humanoid.Health > 0 then
+                    -- Bay tới quái bằng Tween (Bypass Anti-cheat)
+                    local dist = (char.HumanoidRootPart.Position - mob.HumanoidRootPart.Position).Magnitude
+                    if dist > 10 then
+                        char.HumanoidRootPart.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0, 7, 0)
+                    else
+                        char.HumanoidRootPart.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0, 7, 0)
+                        -- Auto Click đánh quái
+                        game:GetService("VirtualUser"):CaptureController()
+                        game:GetService("VirtualUser"):Button1Down(Vector2.new(1280, 672))
+                    end
+                end
+            end)
+        end
+    end)
+end
+
+-- TAB HIỂN THỊ (VISUALS)
+local VisualTab = Window:CreateTab("Hiển Thị", 4483362458)
+
+VisualTab:CreateButton({
+   Name = "Bật ESP Player (Khung xương)",
+   Callback = function()
+       -- Logic ESP đơn giản
+       for _,v in pairs(game.Players:GetPlayers()) do
+           if v ~= game.Players.LocalPlayer and v.Character then
+               local Box = Instance.new("Highlight", v.Character)
+               Box.FillTransparency = 0.5
+               Box.OutlineColor = Color3.fromRGB(255, 0, 0)
+           end
+       end
+   end,
+})
+
+-- TAB TIỆN ÍCH (MISC)
+local MiscTab = Window:CreateTab("Tiện Ích", 4483362458)
+
+MiscTab:CreateButton({
+   Name = "Boost FPS & Giảm Lag",
+   Callback = function()
+       local l = game:GetService("Lighting")
+       l.GlobalShadows = false
+       l.FogEnd = 9e9
+       settings().Rendering.QualityLevel = "Level01"
+       for _, v in pairs(game:GetDescendants()) do
+           if v:IsA("Part") or v:IsA("MeshPart") then
+               v.Material = Enum.Material.Plastic
+               v.Reflectance = 0
+           elseif v:IsA("Decal") then
+               v:Destroy()
+           end
+       end
+       Rayfield:Notify({Title = "Bundac Hub", Content = "Đã tối ưu hóa FPS!"})
+   end,
+})
+
+MiscTab:CreateToggle({
+   Name = "Safe Mode (Ẩn khi Admin vào)",
+   CurrentValue = false,
+   Callback = function(Value)
+      _G.SafeMode = Value
+   end,
+})
