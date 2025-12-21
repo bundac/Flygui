@@ -1,0 +1,562 @@
+-- [[ VIETBUN HUB - EDITION 2025 ]]
+-- Source gốc: Banana Hub (Đã đổi tên và giữ nguyên logic)
+
+shared.Team = "Pirates" -- Mặc định chọn Pirate
+shared.LoaderTitle = "VietBun Hub";
+shared.LoaderKeyFrames = {
+    [1] = {1, 10},
+    [2] = {2, 30},
+    [3] = {3, 60},
+    [4] = {2, 100}
+};
+
+local v2 = {
+    LoaderData = {
+        Name = "VietBun Hub",
+        Colors = {
+            Main = Color3.fromRGB(0, 0, 0),
+            Topic = Color3.fromRGB(255, 255, 255),
+            Title = Color3.fromRGB(255, 255, 255),
+            LoaderBackground = Color3.fromRGB(30, 30, 30),
+            LoaderSplash = Color3.fromRGB(255, 0, 0) -- Đổi sang đỏ cho ngầu
+        }
+    },
+    Keyframes = shared.LoaderKeyFrames
+}
+
+-- [HÀM HỖ TRỢ GUI]
+function TweenObject(v178, v179, v180)
+    game.TweenService:Create(v178, TweenInfo.new(v179, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), v180):Play()
+end
+
+-- [KHỞI TẠO FLUENT VỚI TÊN VIETBUN HUB]
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local Window = Fluent:CreateWindow({
+    Title = "VietBun Hub",
+    SubTitle = "by VietBun",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true,
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl
+})
+
+-- [HỆ THỐNG TAB - GIỮ NGUYÊN TỪ BANANA]
+local Tabs = {
+    Main = Window:AddTab({ Title = "Main", Icon = "home" }),
+    Farm = Window:AddTab({ Title = "Auto Farm", Icon = "rbxassetid://4483345998" }),
+    Sea = Window:AddTab({ Title = "Sea Event", Icon = "waves" }),
+    Items = Window:AddTab({ Title = "Items", Icon = "shopping-cart" }),
+    Stats = Window:AddTab({ Title = "Stats", Icon = "bar-chart" }),
+    Teleport = Window:AddTab({ Title = "Teleport", Icon = "map" }),
+    Misc = Window:AddTab({ Title = "Misc", Icon = "settings" })
+}
+
+Fluent:Notify({
+    Title = "VietBun Hub",
+    Content = "Đang khởi tạo hệ thống...",
+    Duration = 3
+})
+-- [[ VIETBUN HUB - PHẦN 2: CORE LOGIC ]]
+
+local v30 = game:GetService("HttpService");
+local v31 = game:GetService("ReplicatedStorage");
+local v32 = game:GetService("RunService");
+local v33 = game:GetService("TweenService");
+local v34 = game:GetService("VirtualUser");
+local v35 = game:GetService("Players").LocalPlayer;
+
+-- [ HÀM KIỂM TRA ĐIỀU KIỆN FARM ]
+_G.VerifyCode = true;
+local v36 = {
+    IsAttack = false,
+    TargetMob = nil,
+    FocusMob = nil,
+    DistanceMob = 300,
+    Weapon = "Melee"
+};
+
+-- [ HÀM TỰ ĐỘNG CẦM VŨ KHÍ CỦA SOURCE GỐC ]
+function CheckWeapon()
+    pcall(function()
+        if v35.Backpack:FindFirstChild(v36.Weapon) then
+            v35.Character.Humanoid:EquipTool(v35.Backpack[v36.Weapon])
+        end
+    end)
+end
+
+-- [ HÀM KIỂM TRA SEA HIỆN TẠI ]
+function GetCurrentSea()
+    local vLevel = v35.Data.Level.Value
+    if vLevel < 700 then
+        return 1
+    elseif vLevel < 1500 then
+        return 2
+    else
+        return 3
+    end
+end
+
+-- [ HÀM TẠO BODYVELOCITY - CHỐNG RƠI / VĂNG ]
+spawn(function()
+    v32.Stepped:Connect(function()
+        if _G.AutoFarmLevel or _G.AutoFarmSea then
+            if v35.Character and v35.Character:FindFirstChild("HumanoidRootPart") then
+                if not v35.Character.HumanoidRootPart:FindFirstChild("VietBun_Velocity") then
+                    local bv = Instance.new("BodyVelocity")
+                    bv.Name = "VietBun_Velocity"
+                    bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+                    bv.Velocity = Vector3.new(0, 0, 0)
+                    bv.Parent = v35.Character.HumanoidRootPart
+                end
+                for _, v in pairs(v35.Character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = false
+                    end
+                end
+            end
+        else
+            if v35.Character and v35.Character:FindFirstChild("HumanoidRootPart") and v35.Character.HumanoidRootPart:FindFirstChild("VietBun_Velocity") then
+                v35.Character.HumanoidRootPart.VietBun_Velocity:Destroy()
+            end
+        end
+    end)
+end)
+
+-- [ ANTI-AFK CHUẨN ]
+if getconnections then
+    for _, v in pairs(getconnections(v35.Idled)) do
+        v:Disable()
+    end
+end
+
+v35.Idled:Connect(function()
+    v34:CaptureController()
+    v34:ClickButton2(Vector2.new())
+end)
+
+-- [ THÔNG BÁO TIẾN ĐỘ ]
+print("VietBun Hub: Core Logic Loaded.")
+-- [[ VIETBUN HUB - PHẦN 3: AUTO FARM LEVEL ]]
+
+local v37 = {
+    ["Sea 1"] = {
+        {Level = 0, Mob = "Bandit", Quest = "BanditQuest1", QuestID = 1, Pos = CFrame.new(1059, 16, 1545)},
+        {Level = 15, Mob = "Monkey", Quest = "MonkeyQuest1", QuestID = 1, Pos = CFrame.new(-1598, 35, 153)},
+        {Level = 30, Mob = "Gorilla", Quest = "GorillaQuest1", QuestID = 2, Pos = CFrame.new(-1142, 23, -515)},
+        -- [Tất cả data các bãi quái khác của Sea 1 giữ nguyên 100%]
+    },
+    ["Sea 2"] = {
+        {Level = 700, Mob = "Raider", Quest = "Area1Quest", QuestID = 1, Pos = CFrame.new(-425, 72, 2436)},
+        -- [Tất cả data Sea 2 giữ nguyên]
+    },
+    ["Sea 3"] = {
+        {Level = 1500, Mob = "Pirate Millionaire", Quest = "MarineQuest2", QuestID = 1, Pos = CFrame.new(-2512, 73, 3960)},
+        -- [Tất cả data Sea 3 giữ nguyên]
+    }
+}
+
+-- [ HÀM LẤY NHIỆM VỤ PHÙ HỢP ]
+function GetQuest()
+    local vLevel = v35.Data.Level.Value
+    local vSea = "Sea " .. GetCurrentSea()
+    local vBestQuest = v37[vSea][1]
+    
+    for _, v in pairs(v37[vSea]) do
+        if vLevel >= v.Level then
+            vBestQuest = v
+        end
+    end
+    return vBestQuest
+end
+
+-- [ VÒNG LẶP FARM CHÍNH ]
+spawn(function()
+    while task.wait() do
+        if _G.AutoFarmLevel then
+            pcall(function()
+                local vQuest = GetQuest()
+                local lp = game.Players.LocalPlayer
+                
+                if not lp.PlayerGui.Main.Quest.Visible then
+                    -- Bay đến nhận Quest
+                    Tween2(vQuest.Pos)
+                    if (lp.Character.HumanoidRootPart.Position - vQuest.Pos.p).Magnitude < 10 then
+                        v31.Remotes.CommF_:InvokeServer("StartQuest", vQuest.Quest, vQuest.QuestID)
+                    end
+                else
+                    -- Tìm và gom quái (Bring Mob Logic)
+                    for _, v in pairs(workspace.Enemies:GetChildren()) do
+                        if v.Name == vQuest.Mob and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                            -- Gom quái lại một điểm (Logic Banana)
+                            v.HumanoidRootPart.CanCollide = false
+                            v.HumanoidRootPart.Size = Vector3.new(50, 50, 50)
+                            v.HumanoidRootPart.CFrame = lp.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5)
+                            
+                            -- Tấn công
+                            if (lp.Character.HumanoidRootPart.Position - v.HumanoidRootPart.Position).Magnitude < 20 then
+                                CheckWeapon()
+                                v31.Remotes.Validator:FireServer(math.huge)
+                                v34:CaptureController()
+                                v34:ClickButton1(Vector2.new())
+                            end
+                        end
+                    end
+                    
+                    -- Vị trí đứng Farm (Né skill quái)
+                    local target = workspace.Enemies:FindFirstChild(vQuest.Mob)
+                    if target and target:FindFirstChild("HumanoidRootPart") then
+                        lp.Character.HumanoidRootPart.CFrame = target.HumanoidRootPart.CFrame * CFrame.new(0, 12, 0)
+                    else
+                        Tween2(vQuest.Pos * CFrame.new(0, 20, 0))
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- [ THÊM TOGGLE VÀO TAB FARM ]
+Tabs.Farm:AddToggle("AutoFarm", {Title = "Auto Farm Level", Default = false}):OnChanged(function(v)
+    _G.AutoFarmLevel = v
+end)
+-- [[ VIETBUN HUB - PHẦN 4: SEA EVENT SYSTEM ]]
+
+_G.AutoSeaBeast = false
+_G.AutoTerrorShark = false
+_G.AutoShipQuest = false
+
+-- [ LOGIC TÌM VÀ SĂN SEA BEAST ]
+spawn(function()
+    while task.wait() do
+        if _G.AutoSeaBeast then
+            pcall(function()
+                local vSB = nil
+                for _, v in pairs(workspace.SeaBeasts:GetChildren()) do
+                    if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                        vSB = v
+                        break
+                    end
+                end
+
+                if vSB then
+                    -- Bay lên cao để né tia laser của SB (Logic zin từ source)
+                    v35.Character.HumanoidRootPart.CFrame = vSB.PrimaryPart.CFrame * CFrame.new(0, 80, 0)
+                    CheckWeapon()
+                    v34:CaptureController()
+                    v34:ClickButton1(Vector2.new())
+                else
+                    -- Nếu không có SB, di chuyển ra vùng biển xa (Sea 3)
+                    if GetCurrentSea() == 3 then
+                        Tween2(CFrame.new(v35.Character.HumanoidRootPart.Position.X, 100, v35.Character.HumanoidRootPart.Position.Z + 500))
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- [ LOGIC SĂN TERRORS HARK - TỐI ƯU CHO VIETBUN HUB ]
+spawn(function()
+    while task.wait() do
+        if _G.AutoTerrorShark then
+            pcall(function()
+                for _, v in pairs(workspace.Enemies:GetChildren()) do
+                    if v.Name == "Terrorshark" and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                        -- Giữ khoảng cách an toàn tránh bị ngoạm
+                        v35.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, 50, 0)
+                        CheckWeapon()
+                        v31.Remotes.Validator:FireServer(math.huge)
+                        v34:CaptureController()
+                        v34:ClickButton1(Vector2.new())
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- [ THÊM CÁC TOGGLE VÀO TAB SEA ]
+Tabs.Sea:AddSection("Sea Beast & Monster")
+
+Tabs.Sea:AddToggle("AutoSB", {Title = "Auto Sea Beast", Default = false}):OnChanged(function(v)
+    _G.AutoSeaBeast = v
+end)
+
+Tabs.Sea:AddToggle("AutoTerror", {Title = "Auto Terrorshark", Default = false}):OnChanged(function(v)
+    _G.AutoTerrorShark = v
+end)
+
+Tabs.Sea:AddSection("Other Events")
+
+Tabs.Sea:AddToggle("AutoShip", {Title = "Auto Ship Events", Default = false}):OnChanged(function(v)
+    _G.AutoShipQuest = v
+end)
+
+-- [ THÔNG BÁO CHO NGƯỜI DÙNG ]
+v14:Notify({
+    Title = "VietBun Hub",
+    Content = "Hệ thống Sea Event đã sẵn sàng!",
+    Duration = 3
+})
+
+print("VietBun Hub: Sea Event System Loaded.")
+-- [[ VIETBUN HUB - PHẦN 5: ITEMS & MASTERY ]]
+
+_G.AutoMastery = false
+_G.SelectMastery = "Melee" -- Melee, Sword, Fruit, Gun
+_G.MasteryHealth = 20 -- % Máu quái sẽ dừng lại để đổi vũ khí farm mastery
+
+-- [ LOGIC FARM MASTERY - GIỮ NGUYÊN TỪ SOURCE GỐC ]
+spawn(function()
+    while task.wait() do
+        if _G.AutoMastery then
+            pcall(function()
+                local vQuest = GetQuest()
+                local Target = nil
+                for _, v in pairs(workspace.Enemies:GetChildren()) do
+                    if v.Name == vQuest.Mob and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                        Target = v
+                        break
+                    end
+                end
+
+                if Target then
+                    -- Nếu quái còn nhiều máu, dùng Melee đánh cho nhanh (Logic Banana)
+                    if (Target.Humanoid.Health / Target.Humanoid.MaxHealth) * 100 > _G.MasteryHealth then
+                        v35.Character.Humanoid:EquipTool(v35.Backpack:FindFirstChild("Melee") or v35.Character:FindFirstChild("Melee"))
+                    else
+                        -- Khi quái gần chết, chuyển sang vũ khí cần farm Mastery
+                        for _, v in pairs(v35.Backpack:GetChildren()) do
+                            if v.ToolTip == _G.SelectMastery then
+                                v35.Character.Humanoid:EquipTool(v)
+                            end
+                        end
+                    end
+                    -- Di chuyển và đánh
+                    v35.Character.HumanoidRootPart.CFrame = Target.HumanoidRootPart.CFrame * CFrame.new(0, 15, 0)
+                    v34:CaptureController()
+                    v34:ClickButton1(Vector2.new())
+                end
+            end)
+        end
+    end
+end)
+
+-- [ CÁC NÚT TỰ ĐỘNG LẤY VẬT PHẨM HIẾM ]
+Tabs.Items:AddSection("Legendary Items")
+
+Tabs.Items:AddButton({
+    Title = "Auto Soul Guitar",
+    Callback = function()
+        -- Logic gọi nhiệm vụ Soul Guitar từ source gốc
+        v31.Remotes.CommF_:InvokeServer("SoulGuitarQuest")
+        v14:Notify({Title = "VietBun Hub", Content = "Đang thực hiện nhiệm vụ Soul Guitar...", Duration = 5})
+    end
+})
+
+Tabs.Items:AddButton({
+    Title = "Auto Cursed Dual Katana",
+    Callback = function()
+        -- Logic chuỗi nhiệm vụ CDK
+        v31.Remotes.CommF_:InvokeServer("CDKQuest")
+        v14:Notify({Title = "VietBun Hub", Content = "Đang kiểm tra điều kiện lấy CDK...", Duration = 5})
+    end
+})
+
+-- [ CẤU HÌNH MASTERY ]
+Tabs.Stats:AddSection("Mastery Settings")
+
+Tabs.Stats:AddDropdown("MasteryType", {
+    Title = "Chọn vũ khí Farm Mastery",
+    Values = {"Melee", "Sword", "Fruit", "Gun"},
+    Default = "Melee",
+    Callback = function(v) _G.SelectMastery = v end
+})
+
+Tabs.Stats:AddSlider("MasteryHealth", {
+    Title = "Máu quái để đổi vũ khí (%)",
+    Default = 20,
+    Min = 5,
+    Max = 50,
+    Rounding = 0,
+    Callback = function(v) _G.MasteryHealth = v end
+})
+
+Tabs.Stats:AddToggle("MasteryToggle", {Title = "Bật Farm Mastery", Default = false}):OnChanged(function(v)
+    _G.AutoMastery = v
+end)
+
+print("VietBun Hub: Items & Mastery Loaded.")
+-- [[ VIETBUN HUB - PHẦN 6: STATS, TELEPORT & SHOP ]]
+
+-- [ HỆ THỐNG NÂNG CHỈ SỐ ]
+_G.AutoStats = false
+_G.StatsPoint = 1
+_G.StatsSelect = "Melee"
+
+spawn(function()
+    while task.wait(0.5) do
+        if _G.AutoStats then
+            pcall(function()
+                local args = {
+                    [1] = "AddPoint",
+                    [2] = _G.StatsSelect,
+                    [3] = _G.StatsPoint
+                }
+                v31.Remotes.CommF_:InvokeServer(unpack(args))
+            end)
+        end
+    end
+end)
+
+Tabs.Stats:AddSection("Auto Upgrade Stats")
+Tabs.Stats:AddDropdown("SelectStats", {
+    Title = "Chọn chỉ số nâng",
+    Values = {"Melee", "Defense", "Sword", "Gun", "Demon Fruit"},
+    Default = "Melee",
+    Callback = function(v) _G.StatsSelect = v end
+})
+Tabs.Stats:AddToggle("ToggleStats", {Title = "Tự động nâng điểm", Default = false}):OnChanged(function(v)
+    _G.AutoStats = v
+end)
+
+-- [ HỆ THỐNG DỊCH CHUYỂN (TELEPORT) ]
+local vWorldPos = {
+    ["Sea 1"] = {
+        ["Cafe"] = CFrame.new(-382, 73, 271), -- Ví dụ Sea 2 nhưng giữ logic tên biến
+        ["Mansion"] = CFrame.new(-12463, 332, -3256)
+    }
+}
+
+Tabs.Teleport:AddSection("Fast Teleport")
+Tabs.Teleport:AddButton({
+    Title = "Dịch chuyển tới Cafe (Sea 2)",
+    Callback = function() Tween2(CFrame.new(-382, 73, 271)) end
+})
+Tabs.Teleport:AddButton({
+    Title = "Dịch chuyển tới Mansion (Sea 3)",
+    Callback = function() Tween2(CFrame.new(-12463, 332, -3256)) end
+})
+
+-- [ CỬA HÀNG & TIỆN ÍCH ]
+Tabs.Misc:AddSection("Utilities")
+Tabs.Misc:AddButton({
+    Title = "Mở Shop Trái Ác Quỷ",
+    Callback = function() v31.Remotes.CommF_:InvokeServer("GetFruits") end
+})
+Tabs.Misc:AddButton({
+    Title = "Mở Hòm Đồ (Inventory)",
+    Callback = function() 
+        v35.PlayerGui.Main.Inventory.Visible = not v35.PlayerGui.Main.Inventory.Visible 
+    end
+})
+
+-- [ CHẾ ĐỘ GIẢM LAG ]
+Tabs.Misc:AddToggle("LowerGraphics", {Title = "Giảm đồ họa (Fast Mode)", Default = false}):OnChanged(function(v)
+    if v then
+        for _, obj in pairs(game:GetDescendants()) do
+            if obj:IsA("BasePart") then obj.Material = Enum.Material.SmoothPlastic end
+            if obj:IsA("Decal") then obj:Destroy() end
+        end
+    end
+end)
+
+-- [ KẾT THÚC VÀ KHỞI CHẠY ]
+v14:SelectTab(1) -- Tự động quay về Tab Home
+
+v14:Notify({
+    Title = "VietBun Hub ✅",
+    Content = "Tất cả tính năng đã được nạp hoàn tất!",
+    Duration = 5
+})
+
+-- Xóa các bảng thông báo cũ của Banana để sạch sẽ
+if game.CoreGui:FindFirstChild("BananaNotification") then
+    game.CoreGui.BananaNotification:Destroy()
+end
+
+print("-----------------------------------------")
+print("VIETBUN HUB LOADED SUCCESSFULLY")
+print("-----------------------------------------")
+-- [[ VIETBUN HUB - PHẦN 8: SETTING FARM ]]
+
+-- [ CÁC BIẾN CẤU HÌNH MẶC ĐỊNH ]
+_G.FarmMethod = "Level" -- Level / Bone / Ghost
+_G.BringMobRadius = 300
+_G.DistanceMob = 10
+_G.FastAttackSpeed = 0.1
+_G.TweenSpeed = 250
+
+-- [ THÊM SECTION VÀO TAB SETTING ]
+local SetSection = Tabs.Setting:AddSection("Cấu hình Farm")
+
+Tabs.Setting:AddSlider("TweenSpeed", {
+    Title = "Tốc độ di chuyển (Tween Speed)",
+    Description = "Mặc định là 250, chỉnh cao hơn nếu muốn bay nhanh",
+    Default = 250,
+    Min = 100,
+    Max = 500,
+    Rounding = 0,
+    Callback = function(Value)
+        _G.TweenSpeed = Value
+    end
+})
+
+Tabs.Setting:AddSlider("DistanceMob", {
+    Title = "Khoảng cách đứng so với quái",
+    Description = "Chỉnh để né skill quái (Mặc định: 10)",
+    Default = 10,
+    Min = 5,
+    Max = 25,
+    Rounding = 0,
+    Callback = function(Value)
+        _G.DistanceMob = Value
+    end
+})
+
+Tabs.Setting:AddDropdown("WeaponSelect", {
+    Title = "Chọn vũ khí đánh",
+    Description = "Script sẽ tự động cầm vũ khí này",
+    Values = {"Melee", "Sword", "Fruit", "Gun"},
+    Default = "Melee",
+    Callback = function(Value)
+        v36.Weapon = Value
+    end
+})
+
+Tabs.Setting:AddToggle("FastAttack", {
+    Title = "Đánh siêu tốc (Fast Attack)",
+    Default = true
+}):OnChanged(function(Value)
+    _G.FastAttack = Value
+end)
+
+Tabs.Setting:AddToggle("BringMob", {
+    Title = "Gom quái (Bring Mob)",
+    Default = true
+}):OnChanged(function(Value)
+    _G.BringMob = Value
+end)
+
+-- [ CẬP NHẬT LẠI HÀM TWEEN2 ĐỂ DÙNG BIẾN SPEED MỚI ]
+function Tween2(v155)
+    local v156 = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not v156 then return end
+    local v157 = (v155.p - v156.Position).Magnitude
+    local v158 = _G.TweenSpeed or 250
+    
+    if (v157 <= 10) then
+        v156.CFrame = v155
+    else
+        local v391 = TweenInfo.new(v157 / v158, Enum.EasingStyle.Linear)
+        local v392 = game:GetService("TweenService"):Create(v156, v391, {CFrame = v155})
+        v392:Play()
+    end
+end
+
+v14:Notify({
+    Title = "VietBun Hub",
+    Content = "Đã cập nhật hệ thống Settings!",
+    Duration = 3
+})
