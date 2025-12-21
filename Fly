@@ -1,0 +1,63 @@
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local player = game.Players.LocalPlayer
+_G.FlySpeed = 50 
+local fly_dang_bat = false
+local bv, bg
+local nut_fly = Instance.new("TextButton")
+nut_fly.Name = "FlyButton"
+nut_fly.Parent = mainFrame
+nut_fly.Size = UDim2.new(0, 200, 0, 50)
+nut_fly.Position = UDim2.new(0, 25, 0, 250)
+nut_fly.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+nut_fly.Text = "FLY: TẮT"
+nut_fly.TextColor3 = Color3.fromRGB(255, 255, 255)
+nut_fly.Font = Enum.Font.GothamBold
+nut_fly.TextSize = 14
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 10)
+corner.Parent = nut_fly
+local function bat_dau_bay()
+    local char = player.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local root = char.HumanoidRootPart
+    local hum = char:FindFirstChildOfClass("Humanoid")
+bv = Instance.new("BodyVelocity")
+    bv.Name = "FlyVelocity"
+    bv.MaxForce = Vector3.new(1e6, 1e6, 1e6)
+    bv.Velocity = Vector3.new(0, 0, 0)
+    bv.Parent = root
+bg = Instance.new("BodyGyro")
+    bg.Name = "FlyGyro"
+    bg.MaxTorque = Vector3.new(1e6, 1e6, 1e6)
+    bg.P = 9e4
+    bg.CFrame = root.CFrame
+    bg.Parent = root
+
+    hum.PlatformStand = true
+while fly_dang_bat and char:Parent do
+            RunService.RenderStepped:Wait()
+            local cam = workspace.CurrentCamera
+bv.Velocity = cam.CFrame.LookVector * _G.FlySpeed
+            bg.CFrame = cam.CFrame
+        end
+        -- Dọn dẹp khi tắt
+        if bv then bv:Destroy() end
+        if bg then bg:Destroy() end
+        if hum then hum.PlatformStand = false end
+    end)
+end
+nut_fly.MouseButton1Click:Connect(function()
+    fly_dang_bat = not fly_dang_bat
+    
+    if fly_dang_bat then
+        -- Hiệu ứng đổi màu xanh
+        TweenService:Create(nut_fly, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(0, 255, 0)}):Play()
+        nut_fly.Text = "FLY: ĐANG BẬT"
+        bat_dau_bay()
+    else
+TweenService:Create(nut_fly, TweenInfo.new(0.3), {BackgroundColor3 = Color3.fromRGB(255, 0, 0)}):Play()
+        nut_fly.Text = "FLY: TẮT"
+    end
+end)
