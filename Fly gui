@@ -1,0 +1,73 @@
+-- 1. CÀI ĐẶT CƠ BẢN
+local player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local fly_dang_bat = false
+local toc_do_index = 1
+local danh_sach_toc_do = {50, 100, 150, 200} -- Các mức tốc độ bạn có thể chọn
+_G.FlySpeed = danh_sach_toc_do[toc_do_index]
+
+-- 2. TẠO GIAO DIỆN (GUI)
+local sg = Instance.new("ScreenGui", game.CoreGui)
+local frame = Instance.new("Frame", sg)
+frame.Size = UDim2.new(0, 150, 0, 120)
+frame.Position = UDim2.new(0.5, -75, 0.5, -60)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Active = true
+frame.Draggable = true -- Có thể kéo bảng đi chỗ khác
+
+local corner = Instance.new("UICorner", frame)
+
+-- Nút Bật/Tắt Bay
+local btnFly = Instance.new("TextButton", frame)
+btnFly.Size = UDim2.new(0, 130, 0, 40)
+btnFly.Position = UDim2.new(0, 10, 0, 15)
+btnFly.Text = "FLY: OFF"
+btnFly.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+btnFly.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", btnFly)
+
+-- Nút Chỉnh Tốc Độ
+local btnSpeed = Instance.new("TextButton", frame)
+btnSpeed.Size = UDim2.new(0, 130, 0, 40)
+btnSpeed.Position = UDim2.new(0, 10, 0, 65)
+btnSpeed.Text = "TỐC ĐỘ: " .. _G.FlySpeed
+btnSpeed.BackgroundColor3 = Color3.fromRGB(50, 50, 200)
+btnSpeed.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner", btnSpeed)
+
+-- 3. LOGIC BAY (FLY)
+local bv, bg
+local function xu_ly_bay()
+    local char = player.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+    local root = char.HumanoidRootPart
+    local hum = char:FindFirstChildOfClass("Humanoid")
+
+    bv = Instance.new("BodyVelocity", root)
+    bv.MaxForce = Vector3.new(1e6, 1e6, 1e6)
+    
+    bg = Instance.new("BodyGyro", root)
+    bg.MaxTorque = Vector3.new(1e6, 1e6, 1e6)
+    bg.P = 9e4
+
+    hum.PlatformStand = true
+
+    task.spawn(function()
+        while fly_dang_bat and char:Parent do
+            RunService.RenderStepped:Wait()
+            local cam = workspace.CurrentCamera
+            bv.Velocity = cam.CFrame.LookVector * _G.FlySpeed
+            bg.CFrame = cam.CFrame
+        end
+        if bv then bv:Destroy() end
+        if bg then bg:Destroy() end
+        hum.PlatformStand = false
+    end)
+end
+
+-- 4. KẾT NỐI NÚT BẤM
+btnFly.MouseButton1Click:Connect(function()
+    fly_dang_bat = not fly_dang_bat
+    if fly_dang_bat then
+        btnFly.Text = "FLY: ON"
+        btnFly.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
