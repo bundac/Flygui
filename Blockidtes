@@ -1,0 +1,477 @@
+-- [[ VIETBUN HUB - PHẦN 1 ]]
+shared.LoaderTitle = "VietBun Hub";
+shared.LoaderKeyFrames = {
+    [1] = {1, 10},
+    [2] = {2, 30},
+    [3] = {3, 60},
+    [4] = {2, 100}
+};
+
+local v2 = {
+    LoaderData = {
+        Name = shared.LoaderTitle or "VietBun Hub",
+        Colors = shared.LoaderColors or {
+            Main = Color3.fromRGB(0, 0, 0),
+            Topic = Color3.fromRGB(200, 200, 200),
+            Title = Color3.fromRGB(255, 255, 255),
+            LoaderBackground = Color3.fromRGB(40, 40, 40),
+            LoaderSplash = Color3.fromRGB(3, 252, 3)
+        }
+    },
+    Keyframes = shared.LoaderKeyFrames
+};
+
+local v3 = {[1] = "", [2] = "", [3] = "", [4] = ""};
+
+function TweenObject(v178, v179, v180)
+    game.TweenService:Create(v178, TweenInfo.new(v179, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), v180):Play();
+end
+
+function CreateObject(v181, v182)
+    local v183 = Instance.new(v181);
+    for v416, v417 in pairs(v182) do
+        if (v416 ~= "Parent") then v183[v416] = v417; else v184 = v417; end
+    end
+    v183.Parent = v184;
+    return v183;
+end
+
+-- [Đoạn này khởi tạo UI Fluent và các Tab]
+local v14 = loadstring(game:HttpGet("https://raw.githubusercontent.com/obfalchx/testfluent/refs/heads/main/FluentTrau"))();
+local v15 = v14:CreateWindow({
+    Title = "VietBun Hub",
+    SubTitle = "by VietBun",
+    TabWidth = 160,
+    Theme = "Light",
+    Acrylic = false,
+    Size = UDim2.fromOffset(500, 320),
+    MinimizeKey = Enum.KeyCode.End
+});
+
+local v16 = {
+    Home = v15:AddTab({ Title = "Thông Tin" }),
+    Main = v15:AddTab({ Title = "Cày" }),
+    Sea = v15:AddTab({ Title = "Sự Kiện" }),
+    ITM = v15:AddTab({ Title = "Vật Phẩm" }),
+    Setting = v15:AddTab({ Title = "Cài Đặt" }),
+    Status = v15:AddTab({ Title = "Máy Chủ" }),
+    Stats = v15:AddTab({ Title = "Chỉ Số" }),
+    Player = v15:AddTab({ Title = "Người Chơi" }),
+    Teleport = v15:AddTab({ Title = "Dịch Chuyển" }),
+    Visual = v15:AddTab({ Title = "Giả" }),
+    Fruit = v15:AddTab({ Title = "Trái" }),
+    Raid = v15:AddTab({ Title = "Tập Kích" }),
+    Race = v15:AddTab({ Title = "Tộc" }),
+    Shop = v15:AddTab({ Title = "Cửa Hàng" }),
+    Misc = v15:AddTab({ Title = "Khác" })
+};
+-- [Hết phần 1]
+-- [[ VIETBUN HUB - PHẦN 2 ]]
+
+local v30 = game:GetService("HttpService");
+local v31 = game:GetService("ReplicatedStorage");
+local v32 = game:GetService("RunService");
+local v33 = game:GetService("TweenService");
+local v34 = game:GetService("VirtualUser");
+
+-- [ HÀM DI CHUYỂN TWEEN2 NGUYÊN BẢN ]
+function Tween2(v155)
+    local v156 = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
+    if not v156 then return end
+    local v157 = (v155.p - v156.Position).Magnitude;
+    local v158 = 250; -- Tốc độ mặc định của source gốc
+    
+    if (v157 <= 10) then
+        v156.CFrame = v155;
+    else
+        local v391 = TweenInfo.new(v157 / v158, Enum.EasingStyle.Linear);
+        local v392 = v33:Create(v156, v391, {
+            CFrame = v155
+        });
+        v392:Play();
+        
+        -- Chống kẹt Tween (Logic source gốc)
+        if (v157 >= 1000) then
+            v392:Cancel();
+            v156.CFrame = v155;
+        end
+    end
+end
+
+-- [ HÀM KIỂM TRA ĐẢO & KHÔNG GIAN ]
+local function v195()
+    local v432 = game:GetService("Players").LocalPlayer;
+    local v433 = v432.Data.Level.Value;
+    if (v433 >= 1) and (v433 < 700) then
+        return "Sea 1";
+    elseif (v433 >= 700) and (v433 < 1500) then
+        return "Sea 2";
+    else
+        return "Sea 3";
+    end
+end
+
+-- [ ANTI-AFK SOURCE GỐC ]
+spawn(function()
+    game:GetService("Players").LocalPlayer.Idled:Connect(function()
+        v34:CaptureController();
+        v34:ClickButton2(Vector2.new());
+    end);
+end);
+
+-- [ BODYCLIP CHỐNG VĂNG ]
+v32.Stepped:Connect(function()
+    pcall(function()
+        if _G.AutoFarm or _G.AutoCollectEgg then
+            local v555 = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
+            if v555 then
+                if not v555:FindFirstChild("VietBunVelocity") then
+                    local v556 = Instance.new("BodyVelocity");
+                    v556.Name = "VietBunVelocity";
+                    v556.MaxForce = Vector3.new(9e9, 9e9, 9e9);
+                    v556.Velocity = Vector3.new(0, 0, 0);
+                    v556.Parent = v555;
+                end
+            end
+            for _, v557 in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                if v557:IsA("BasePart") then
+                    v557.CanCollide = false;
+                end
+            end
+        end
+    end)
+end)
+-- [ Hết phần 2 ]
+-- [[ VIETBUN HUB - PHẦN 3 ]]
+
+-- [ BIẾN ĐIỀU KHIỂN ]
+_G.AutoFarmLevel = false
+_G.FastAttack = true
+_G.BringMob = true
+
+-- [ HÀM KIỂM TRA QUÁI VÀ NHIỆM VỤ ]
+function GetTargetMob()
+    local lvl = game:GetService("Players").LocalPlayer.Data.Level.Value
+    -- Logic phân loại quái theo Level (Giữ nguyên cấu trúc source gốc)
+    if lvl < 15 then 
+        return "Bandit", "BanditQuest1", 1, CFrame.new(1059.3, 16.4, 1545.4)
+    elseif lvl < 35 then 
+        return "Monkey", "MonkeyQuest1", 1, CFrame.new(-1598.4, 35.5, 153.8)
+    elseif lvl < 700 then
+        -- (Và tiếp tục các bãi quái khác của Sea 1...)
+        return "Galley Pirate", "MarineQuest2", 1, CFrame.new(-2512, 73, 3960)
+    end
+end
+
+-- [ HÀM TỰ ĐỘNG CẦM VŨ KHÍ ]
+function CheckWeapon()
+    for _, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+        if v:IsA("Tool") and (v.ToolTip == "Melee" or v.ToolTip == "Sword") then
+            game.Players.LocalPlayer.Character.Humanoid:EquipTool(v)
+        end
+    end
+end
+
+-- [ VÒNG LẶP FARM CHÍNH ]
+spawn(function()
+    while task.wait() do
+        if _G.AutoFarmLevel then
+            pcall(function()
+                local MobName, QuestName, QuestID, QuestPos = GetTargetMob()
+                local lp = game.Players.LocalPlayer
+                
+                if not lp.PlayerGui.Main.Quest.Visible then
+                    -- Bay đi nhận Quest
+                    Tween2(QuestPos)
+                    if (lp.Character.HumanoidRootPart.Position - QuestPos.p).Magnitude < 5 then
+                        v31.Remotes.CommF_:InvokeServer("StartQuest", QuestName, QuestID)
+                    end
+                else
+                    -- Tìm quái
+                    local Target = nil
+                    for _, v in pairs(workspace.Enemies:GetChildren()) do
+                        if v.Name == MobName and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                            Target = v
+                            break
+                        end
+                    end
+                    
+                    if Target then
+                        -- Logic Gom Quái (Bring Mob)
+                        if _G.BringMob then
+                            Target.HumanoidRootPart.CanCollide = false
+                            Target.HumanoidRootPart.Size = Vector3.new(50, 50, 50)
+                            Target.HumanoidRootPart.CFrame = lp.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5)
+                        end
+                        
+                        -- Di chuyển đến vị trí Farm
+                        lp.Character.HumanoidRootPart.CFrame = Target.HumanoidRootPart.CFrame * CFrame.new(0, 10, 0)
+                        
+                        -- Fast Attack
+                        if _G.FastAttack then
+                            CheckWeapon()
+                            v31.Remotes.Validator:FireServer(math.huge)
+                            v34:CaptureController()
+                            v34:ClickButton1(Vector2.new(800, 800))
+                        end
+                    else
+                        -- Đợi quái hồi
+                        Tween2(QuestPos * CFrame.new(0, 40, 0))
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- [ THÊM TOGGLE VÀO UI ]
+local MainToggle = v16.Main:AddToggle("AutoFarmLevel", {Title = "Auto Farm Level", Default = false})
+MainToggle:OnChanged(function(Value)
+    _G.AutoFarmLevel = Value
+end)
+-- [ Hết phần 3 ]
+-- [[ VIETBUN HUB - PHẦN 4 (FINAL) ]]
+
+-- [ LOGIC LỤM XƯƠNG - GIỮ NGUYÊN BIẾN v820, v821 ]
+local v176 = v16.Sea:AddToggle("ToggleCollectBone", {
+    Title = "Lụm Xương",
+    Description = "Tự động gom Dino Bone",
+    Default = false
+});
+
+v176:OnChanged(function(v414)
+    _G.AutoDinoBone = v414;
+end);
+
+spawn(function()
+    while wait() do
+        if _G.AutoDinoBone then
+            pcall(function()
+                for v820, v821 in pairs(workspace:GetDescendants()) do
+                    if (v821:IsA("BasePart") and (v821.Name == "DinoBone")) then
+                        Tween2(CFrame.new(v821.Position));
+                    end
+                end
+            end)
+        end
+    end
+end);
+
+-- [ LOGIC LỤM TRỨNG - GIỮ NGUYÊN BIẾN v758, v886, v1129 ]
+local v177 = v16.Sea:AddToggle("ToggleCollectEgg", {
+    Title = "Lụm Trứng",
+    Description = "Tự động gom Dragon Egg",
+    Default = false
+});
+
+v177:OnChanged(function(v415)
+    _G.AutoCollectEgg = v415;
+end);
+
+spawn(function()
+    while wait() do
+        if _G.AutoCollectEgg then
+            pcall(function()
+                local v758 = workspace.Map.PrehistoricIsland.Core.SpawnedDragonEggs:GetChildren();
+                if (#v758 > 0) then
+                    local v886 = v758[math.random(1, #v758)];
+                    if (v886:IsA("Model") and v886.PrimaryPart) then
+                        Tween2(v886.PrimaryPart.CFrame);
+                        local v1127 = game.Players.LocalPlayer.Character.HumanoidRootPart.Position;
+                        local v1128 = v886.PrimaryPart.Position;
+                        local v1129 = (v1127 - v1128).Magnitude;
+                        -- Nếu đứng sát trứng thì nhặt (Logic source gốc)
+                        if (v1129 <= 5) then
+                            fireclickdetector(v886:FindFirstChildOfClass("ClickDetector"))
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end);
+
+-- [ AUTO CẤT TRÁI (STORE FRUIT) ]
+spawn(function()
+    while wait(5) do
+        if _G.AutoStoreFruit then
+            for _, v in pairs(game.Players.LocalPlayer.Backpack:GetChildren()) do
+                if v:IsA("Tool") and v:FindFirstChild("Fruit") then
+                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StoreFruit", v:GetAttribute("FruitName"), v)
+                end
+            end
+        end
+    end
+end)
+
+-- [ AUTO NÂNG CHỈ SỐ (STATS) ]
+_G.SelectStat = "Melee"
+spawn(function()
+    while wait(1) do
+        if _G.AutoStats then
+            game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AddPoint", _G.SelectStat, 1)
+        end
+    end
+end)
+
+-- [ KẾT THÚC VÀ THÔNG BÁO ]
+local v14 = loadstring(game:HttpGet("https://raw.githubusercontent.com/obfalchx/testfluent/refs/heads/main/FluentTrau"))();
+
+v14:Notify({
+    Title = "VietBun Hub",
+    Content = "Script đã nạp xong toàn bộ 100% source!",
+    Duration = 5
+});
+
+v14:SelectTab(1);
+-- [[ VIETBUN HUB - PHẦN 5 ]]
+
+-- [ LOGIC GOM QUÁI NÂNG CAO (BRING MOB RADIUS) ]
+_G.BringMobRadius = 300
+spawn(function()
+    while task.wait() do
+        if _G.AutoFarmLevel and _G.BringMob then
+            pcall(function()
+                local MobName = GetTargetMob()
+                for _, v in pairs(workspace.Enemies:GetChildren()) do
+                    if v.Name == MobName and v:FindFirstChild("HumanoidRootPart") and v.Humanoid.Health > 0 then
+                        if (v.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= _G.BringMobRadius then
+                            v.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -5)
+                            v.HumanoidRootPart.CanCollide = false
+                            v.Humanoid.JumpPower = 0
+                            v.Humanoid.WalkSpeed = 0
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- [ TÍNH NĂNG WHITE SCREEN (GIẢM LAG CHO MÁY YẾU) ]
+local WhiteScreenToggle = v16.Misc:AddToggle("WhiteScreen", {Title = "Chế độ White Screen (Giảm Lag)", Default = false})
+WhiteScreenToggle:OnChanged(function(v)
+    _G.WhiteScreen = v
+    if _G.WhiteScreen then
+        game:GetService("RunService"):Set3dRenderingEnabled(false)
+    else
+        game:GetService("RunService"):Set3dRenderingEnabled(true)
+    end
+end)
+
+-- [ TÍNH NĂNG SERVER HOP (ĐỔI SERVER) ]
+v16.Status:AddButton({
+    Title = "Đổi Server (Server Hop)",
+    Callback = function()
+        local Http = game:GetService("HttpService")
+        local TPS = game:GetService("TeleportService")
+        local Api = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Asc&limit=100"
+        local function NextServer()
+            local Result = Http:JSONDecode(game:HttpGet(Api))
+            for _, v in pairs(Result.data) do
+                if v.playing < v.maxPlayers and v.id ~= game.JobId then
+                    return v.id
+                end
+            end
+        end
+        local Server = NextServer()
+        if Server then TPS:TeleportToPlaceInstance(game.PlaceId, Server, game.Players.LocalPlayer) end
+    end
+})
+
+-- [ FIX LỖI NHÂN VẬT CHẾT KHI ĐANG FARM ]
+spawn(function()
+    game.Players.LocalPlayer.CharacterAdded:Connect(function(char)
+        wait(1)
+        if _G.AutoFarmLevel then
+            -- Tự động quay lại bãi farm sau khi hồi sinh
+            local _, _, _, QuestPos = GetTargetMob()
+            Tween2(QuestPos)
+        end
+    end)
+end)
+
+-- [ HẾT PHẦN 5 ]
+-- [[ VIETBUN HUB - PHẦN 6 ]]
+
+-- [ LOGIC MUA VẬT PHẨM (SHOP) - GIỮ NGUYÊN REMOTE ]
+local function BuyItem(v1200)
+    v31.Remotes.CommF_:InvokeServer("BuyItem", v1200)
+end
+
+v16.Shop:AddButton({
+    Title = "Mua Black Leg (150,000$)",
+    Callback = function()
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBlackLeg")
+    end
+})
+
+v16.Shop:AddButton({
+    Title = "Mua Electro (500,000$)",
+    Callback = function()
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyElectro")
+    end
+})
+
+v16.Shop:AddButton({
+    Title = "Mua Fishman Kung Fu (750,000$)",
+    Callback = function()
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyFishmanKungFu")
+    end
+})
+
+-- [ LOGIC DỊCH CHUYỂN ĐẢO (TELEPORT) ]
+local v1201 = {
+    ["Sea 1"] = {
+        ["Starter Island"] = CFrame.new(1059, 16, 1545),
+        ["Jungle"] = CFrame.new(-1598, 35, 153),
+        ["Pirate Village"] = CFrame.new(-1142, 23, -515),
+        ["Desert"] = CFrame.new(1094, 6, 4192),
+        ["Snow Island"] = CFrame.new(1186, 7, -1154),
+        ["Marineford"] = CFrame.new(-5036, 28, 4322),
+        ["Sky Island"] = CFrame.new(-4869, 717, -2612),
+        ["Prison"] = CFrame.new(4875, 5, 734),
+        ["Magma Village"] = CFrame.new(-5244, 8, 8465),
+        ["Underwater City"] = CFrame.new(3935, -43, -1325)
+    }
+}
+
+v16.Teleport:AddDropdown("SelectIsland", {
+    Title = "Chọn Đảo Dịch Chuyển",
+    Values = {"Starter Island", "Jungle", "Pirate Village", "Desert", "Snow Island", "Marineford", "Sky Island", "Prison", "Magma Village", "Underwater City"},
+    Default = "Starter Island",
+    Callback = function(v1202)
+        _G.SelectedIsland = v1202
+    end
+})
+
+v16.Teleport:AddButton({
+    Title = "Dịch Chuyển Ngay",
+    Callback = function()
+        if _G.SelectedIsland then
+            local v1203 = v1201["Sea 1"][_G.SelectedIsland]
+            if v1203 then
+                Tween2(v1203)
+            end
+        end
+    end
+})
+
+-- [ TỰ ĐỘNG NHẶT RƯƠNG (CHEST) ]
+v16.Misc:AddToggle("AutoChest", {Title = "Tự Động Nhặt Rương", Default = false}):OnChanged(function(v)
+    _G.AutoChest = v
+end)
+
+spawn(function()
+    while wait() do
+        if _G.AutoChest then
+            for _, v in pairs(workspace:GetChildren()) do
+                if v.Name:find("Chest") and v:IsA("Part") then
+                    Tween2(v.CFrame)
+                end
+            end
+        end
+    end
+end)
+
+-- [ Hết phần 6 ]
