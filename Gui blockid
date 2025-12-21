@@ -1,0 +1,49 @@
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Blox Fruit - My First Script", "Midnight")
+local Tab1=Window:Newtab("info sever")
+local Tab2=Window:Newtab("Farming")
+local Tab3=Window:Newtab("Shop")
+local Tab4=Window:Newtab("Fruit")
+local Tab5=Window:Newtab("Teleport")
+local Tab6=Window:Newtab("Misc")
+local Farmsection=
+Tab1 Newsection=("Farm mode")
+local Toolsection=
+Tab1 Newsection("weapon")
+_G.AutoFarm = state
+    if state then
+        print("Auto farm on")
+else
+        print("Auto farm off")
+    end
+end)
+ToolSection:NewDropdown{"Melee,Fruit,Sword"}
+function(currentOption)
+    _G.SelectTool = currentOption
+    print("Melee " .. currentOption)
+end)
+function equipWeapon()
+    local p = game.Players.LocalPlayer
+    local char = p.Character
+    if _G.AutoFarm and char then
+FarmSection:NewToggle("Auto Farm Level", "Bật để bắt đầu cày", function(state)
+    _G.AutoFarm = state
+      if state then
+startFarming() 
+    end
+end)
+function startFarming()
+    task.spawn(function()
+        while _G.AutoFarm do
+            task.wait()
+            pcall(function()
+                -- Tìm quái Bandit trong Workspace
+                local mob = workspace.Enemies:FindFirstChild("Bandit")
+                if mob and mob:FindFirstChild("HumanoidRootPart") and mob.Humanoid.Health > 0 then
+                    -- Bay đến phía trên đầu quái
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = mob.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
+                end
+            end)
+        end
+    end)
+end
