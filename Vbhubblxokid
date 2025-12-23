@@ -1,0 +1,569 @@
+repeat
+    wait()
+until game:IsLoaded()
+repeat
+    wait()
+until game.ReplicatedStorage
+repeat
+    wait()
+until game.Players
+repeat
+    wait()
+until game.Players.LocalPlayer
+repeat
+    wait()
+until game.Players.LocalPlayer:FindFirstChild("PlayerGui")
+if not game:IsLoaded() then
+    local v1_ = Instance.new("Message", workspace)
+    v1_.Text = "Wait Game Loading"
+    game.Loaded:Wait()
+    v1_:Destroy()
+    task.wait(10)
+end
+if not game:IsLoaded() then
+    repeat
+        game.Loaded:Wait()
+    until game:IsLoaded()
+end
+if readfile and (writefile and (isfile and (isfolder and not isfile("Vietbun Hub/Discord.txt")))) then
+    local v2_ = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Discord%20Inviter/Source.lua"))()
+    v2_.Prompt({
+        invite = "HhPm7gf24R",
+        name = "Vietbun Hub"
+    })
+    v2_.Join("HhPm7gf24R")
+    writefile("Vietbun Hub/Discord.txt", "plis join ma discord")
+end
+if not game:GetService("Players").LocalPlayer:FindFirstChild("DataLoaded") then
+    repeat
+        game.Loaded:Wait()
+    until game:GetService("Players").LocalPlayer:FindFirstChild("DataLoaded")
+end
+_G.Settings = {
+    Main = {
+        ["Farm Mode Position"] = 2,
+        ["Farm Mode"] = 1,
+        ["Enable Auto Farm"] = false,
+        ["Enable WaterWalk"] = true,
+        ["Saved Position Coordinat"] = nil,
+        ["Select Fruit"] = 1,
+        ["Select Island"] = 1,
+        ["Select NPC"] = 1,
+        ["Select Boss"] = 1,
+        ["Sell Wait"] = 20
+    }
+}
+function LoadSettings()
+    if readfile and (writefile and (isfile and isfolder)) then
+        if not isfolder("Vietbun Hub") then
+            makefolder("Vietbun Hub")
+        end
+        if not isfolder("Vietbun Hub/Blox Fruit/") then
+            makefolder("Vietbun Hub/Blox Fruit/")
+        end
+        if isfile("Vietbun Hub/Blox Fruit/" .. game.Players.LocalPlayer.Name .. ".json") then
+            local v3_ = game:GetService("HttpService"):JSONDecode(readfile("Vietbun Hub/Blox Fruit/" .. game.Players.LocalPlayer.Name .. ".json"))
+            local v4_, v5_, v6_ = pairs(v3_)
+            while true do
+                local v7_
+                v6_, v7_ = v4_(v5_, v6_)
+                if v6_ == nil then
+                    break
+                end
+                _G.Settings[v6_] = v7_
+            end
+        else
+            writefile("Vietbun Hub/Blox Fruit/" .. game.Players.LocalPlayer.Name .. ".json", game:GetService("HttpService"):JSONEncode(_G.Settings))
+        end
+    else
+        local _ = warn
+    end
+end
+function SaveSettings()
+    if readfile and (writefile and (isfile and isfolder)) then
+        if isfile("Vietbun Hub/Blox Fruit/" .. game.Players.LocalPlayer.Name .. ".json") then
+            game:GetService("HttpService"):JSONDecode(readfile("Vietbun Hub/Blox Fruit/" .. game.Players.LocalPlayer.Name .. ".json"))
+            local v8_, v9_, v10_ = pairs(_G.Settings)
+            local v11_ = {}
+            while true do
+                local v12_
+                v10_, v12_ = v8_(v9_, v10_)
+                if v10_ == nil then
+                    break
+                end
+                v11_[v10_] = v12_
+            end
+            writefile("Vietbun Hub/Blox Fruit/" .. game.Players.LocalPlayer.Name .. ".json", game:GetService("HttpService"):JSONEncode(v11_))
+        else
+            LoadSettings()
+        end
+    else
+        local _ = warn
+    end
+end
+LoadSettings()
+if game:GetService("CoreGui"):FindFirstChild("ScreenGui") then
+    game:GetService("CoreGui"):FindFirstChild("ScreenGui"):Destroy()
+end
+game:GetService("Players").LocalPlayer.Idled:connect(function()
+    game:GetService("VirtualUser"):Button2Down(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+    wait(1)
+    game:GetService("VirtualUser"):Button2Up(Vector2.new(0, 0), workspace.CurrentCamera.CFrame)
+end)
+if game:GetService("UserInputService").TouchEnabled or not game:GetService("UserInputService").KeyboardEnabled ~= false then
+    local v13_ = game.CoreGui:FindFirstChild("VietbunScreen")
+    if v13_ then
+        v13_:Destroy()
+    end
+    local v14_ = Instance.new("ScreenGui")
+    local v15_ = Instance.new("TextButton")
+    local v16_ = Instance.new("UICorner")
+    local v17_ = Instance.new("ImageLabel")
+    v14_.Name = "VietbunScreen"
+    v14_.Parent = game.CoreGui
+    v14_.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    v15_.Name = "VietbunToggleUI"
+    v15_.Parent = v14_
+    v15_.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
+    v15_.BorderSizePixel = 0
+    v15_.Position = UDim2.new(0.120833337, 0, 0.0952890813, 0)
+    v15_.Size = UDim2.new(0, 50, 0, 50)
+    v15_.Font = Enum.Font.SourceSans
+    v15_.Text = ""
+    v15_.TextColor3 = Color3.fromRGB(0, 0, 0)
+    v15_.TextSize = 14
+    v15_.Draggable = true
+    v15_.MouseButton1Click:Connect(function()
+        game:GetService("VirtualInputManager"):SendKeyEvent(true, 277, false, game)
+        game:GetService("VirtualInputManager"):SendKeyEvent(false, 277, false, game)
+    end)
+    local v18_ = Instance.new("UIStroke")
+    v18_.Thickness = 3.2
+    v18_.Name = ""
+    v18_.Parent = v15_
+    v18_.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    v18_.LineJoinMode = Enum.LineJoinMode.Round
+    v18_.Color = Color3.fromRGB(255, 0, 0)
+    v18_.Transparency = 0.1
+    v16_.Name = "VietbunCornerUI"
+    v16_.Parent = v15_
+    v17_.Name = "MODILEMAGE"
+    v17_.Parent = v15_
+    v17_.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    v17_.BackgroundTransparency = 1
+    v17_.BorderSizePixel = 0
+    v17_.Position = UDim2.new(0, 0, 0, 0)
+    v17_.Size = UDim2.new(0, 50, 0, 50)
+    v17_.Image = "http://www.roblox.com/asset/?id=9906600154"
+end
+spawn(function()
+    while true do
+        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("CommF"):InvokeServer("Ken",true)
+        task.wait(0.01)
+    end
+end)
+spawn(function()
+    pcall(function()
+        game:GetService("RunService").Stepped:Connect(function()
+            if _G.Settings.Main["Enable Auto Farm"] then
+                if not game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+                    local v19_ = Instance.new("BodyVelocity")
+                    v19_.Name = "BodyClip"
+                    v19_.Parent = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart
+                    v19_.MaxForce = Vector3.new(100000, 100000, 100000)
+                    v19_.Velocity = Vector3.new(0, 0, 0)
+                end
+            elseif game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip") then
+                game:GetService("Players").LocalPlayer.Character.HumanoidRootPart:FindFirstChild("BodyClip"):Destroy()
+            end
+        end)
+    end)
+end)
+local v_u_20_ = "Instant"
+local v_u_21_ = 100
+local v_u_22_ = 1
+local v_u_23_ = 20
+function TeleportPlayer(p24_)
+    local v25_ = game.Players.LocalPlayer
+    local v26_ = (v25_.Character or v25_.CharacterAdded:Wait()):FindFirstChild("HumanoidRootPart")
+    if v26_ then
+        local v27_ = p24_.Position
+        if v_u_20_ == "Instant" then
+            v26_.CFrame = CFrame.new(v27_)
+            return
+        end
+        while v_u_22_ < (v26_.Position - v27_).Magnitude do
+            local v28_ = v26_.Position
+            local v29_ = (v27_ - v28_).Magnitude
+            local v30_ = v29_ < v_u_23_ and math.clamp(v29_ * 0.5, 5, v_u_21_) or v_u_21_
+            local v31_ = v28_ + (v27_ - v28_).Unit * v30_ * game:GetService("RunService").Heartbeat:Wait()
+            v26_.CFrame = CFrame.new(v31_)
+        end
+    end
+end
+local v_u_32_ = {
+    ["Blox Fruits Dealer"] = CFrame.new(-1108, 14, 3897),
+    ["Ability Teacher"] = CFrame.new(-1084, 14, 3932),
+    ["Sword Dealer"] = CFrame.new(-1178, 14, 3927),
+    ["Gun Dealer"] = CFrame.new(-1164, 14, 3916),
+    ["Fruit Remover"] = CFrame.new(-1137, 14, 3905)
+}
+local v_u_33_ = {
+    ["Jungle"] = CFrame.new(-1486, 17, 52),
+    ["Pirate Village"] = CFrame.new(-1144, 4, 3827),
+    ["Desert"] = CFrame.new(918, 6, 4133),
+    ["Snow Village"] = CFrame.new(1363, 16, -1307),
+    ["Marine Fortress"] = CFrame.new(-4882, 322, -4259),
+    ["Sky Island 1"] = CFrame.new(-4857, 717, -2624),
+    ["Sky Island 2"] = CFrame.new(-4492, 716, -1961),
+    ["Sky Island 3"] = CFrame.new(-5240, 440, -2294),
+    ["Prison"] = CFrame.new(4937, 0, 43),
+    ["Colosseum"] = CFrame.new(-1824, 7, -2773),
+    ["Mob Island"] = CFrame.new(-2970, 21, -3074),
+    ["Cafe"] = CFrame.new(-383, 7, 266),
+    ["Fountain City"] = CFrame.new(5100, 5, 4082),
+    ["Graveyard"] = CFrame.new(-5738, 11, -7443),
+    ["Snow Mountain"] = CFrame.new(1147, 129, -1240),
+    ["Hot and Cold"] = CFrame.new(-6162, 16, -5097),
+    ["Cursed Ship"] = CFrame.new(914, 124, 32847),
+    ["Ice Castle"] = CFrame.new(6156, 289, -2968),
+    ["Usoap's Island"] = CFrame.new(4770, 7, 2848),
+    ["Mansion"] = CFrame.new(-3914, 323, -2823)
+}
+local v_u_34_ = {
+    ["Dark Arena"] = CFrame.new(3778, 14, -3527),
+    ["Flamingo Mansion"] = CFrame.new(-318, 331, 597),
+    ["Frozen Village"] = CFrame.new(1132, 27, -1245),
+    ["Magma Village"] = CFrame.new(-5310, 9, 8427)
+}
+local v_u_35_ = {
+    ["Factory"] = CFrame.new(349, 73, -384),
+    ["Marine's Ship"] = CFrame.new(-2348, 73, -3236),
+    ["Midle Town"] = CFrame.new(-629, 17, 1573),
+    ["Great Tree"] = CFrame.new(2631, 37, -177),
+    ["Castle on the Sea"] = CFrame.new(-5495, 314, -2829)
+}
+local v_u_36_ = {
+    ["Fishman Lord"] = CFrame.new(61163, 19, 1571),
+    ["Warden"] = CFrame.new(5232, 5, 747),
+    ["Chief Warden"] = CFrame.new(4854, 5, 740),
+    ["Swan"] = CFrame.new(1051, 125, 1371),
+    ["Magma Admiral"] = CFrame.new(-5369, 9, 8645),
+    ["Vice Admiral"] = CFrame.new(-4258, 73, -3820),
+    ["Wysper"] = CFrame.new(904, 183, 1603),
+    ["Thunder God"] = CFrame.new(-5976, 78, -6493),
+    ["Cyborg"] = CFrame.new(6226, 73, -3009)
+}
+local v37_, v38_, v39_ = pairs(v_u_36_)
+local v40_ = {}
+while true do
+    v39_ = v37_(v38_, v39_)
+    if v39_ == nil then
+        break
+    end
+    table.insert(v40_, v39_)
+end
+local v41_, v42_, v43_ = pairs(v_u_33_)
+local v44_ = {}
+while true do
+    v43_ = v41_(v42_, v43_)
+    if v43_ == nil then
+        break
+    end
+    table.insert(v44_, v43_)
+end
+local v45_, v46_, v47_ = pairs(v_u_35_)
+local v48_ = {}
+while true do
+    v47_ = v45_(v46_, v47_)
+    if v47_ == nil then
+        break
+    end
+    table.insert(v48_, v47_)
+end
+local v49_, v50_, v51_ = pairs(v_u_34_)
+local v52_ = {}
+while true do
+    v51_ = v49_(v50_, v51_)
+    if v51_ == nil then
+        break
+    end
+    table.insert(v52_, v51_)
+end
+local v53_, v54_, v55_ = pairs(v_u_32_)
+local v56_ = {}
+while true do
+    v55_ = v53_(v54_, v55_)
+    if v55_ == nil then
+        break
+    end
+    table.insert(v56_, v55_)
+end
+local v_u_57_ = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/Source.lua"))()
+local v58_ = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/ThemeManager.lua"))()
+local v59_ = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local v_u_60_ = v_u_57_:CreateWindow({
+    Title = "Vietbun Hub | Blox Fruit",
+    SubTitle = "Mobile & PC Version",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 360),
+    Acrylic = false,
+    Theme = "Dark"
+})
+local v61_ = {
+    Main = v_u_60_:AddTab({
+        Title = "Main",
+        Icon = "rbxassetid://97768445692609"
+    }),
+    Teleport = v_u_60_:AddTab({
+        Title = "Teleport",
+        Icon = "rbxassetid://10734977012"
+    }),
+    NPC = v_u_60_:AddTab({
+        Title = "NPC",
+        Icon = "user"
+    }),
+    Settings = v_u_60_:AddTab({
+        Title = "UI Settings",
+        Icon = "settings"
+    })
+}
+local v_u_62_ = v_u_57_.Options
+v58_:SetLibrary(v_u_57_)
+v59_:SetLibrary(v_u_57_)
+v_u_57_:Notify({
+    Title = "Vietbun Hub",
+    Content = "Loading Script . . .",
+    Duration = 8
+})
+v61_.Main:AddParagraph({
+    Title = "More Features Coming Soon !",
+    Content = ""
+})
+v61_.Main:AddButton({
+    Title = "Join Discord",
+    Description = "new update will inform at Discord",
+    Callback = function()
+        local v63_ = loadstring(game:HttpGet("https://raw.githubusercontent.com/RegularVynixu/Utilities/main/Discord%20Inviter/Source.lua"))()
+        v63_.Prompt({
+            invite = "HhPm7gf24R",
+            name = "Vietbun Hub"
+        })
+        v63_.Join("HhPm7gf24R")
+        setclipboard("discord.gg/HhPm7gf24R")
+    end
+})
+local v64_ = v61_.Main:AddSection("[ Settings ]")
+local v65_ = ""
+if _G.Settings.Main["Saved Position Coordinat"] then
+    local v66_, v67_ = pcall(function()
+        return loadstring("return CFrame.new(" .. _G.Settings.Main["Saved Position Coordinat"] .. ")")()
+    end)
+    if v66_ and typeof(v67_) == "CFrame" then
+        v65_ = string.format("%d, %d, %d", math.floor(v67_.Position.X + 0.5), math.floor(v67_.Position.Y + 0.5), math.floor(v67_.Position.Z + 0.5))
+    else
+        warn("Gagal memuat posisi dari data yang disimpan!")
+    end
+end
+PosisiSekarang = v64_:AddParagraph({
+    Title = "Your Saved Position",
+    Content = v65_
+})
+v64_:AddButton({
+    Title = "Save Your Position",
+    Description = "It will save the current position you're standing on.",
+    Callback = function()
+        local v68_ = game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if v68_ then
+            _G.Settings.Main["Saved Position Coordinat"] = tostring(v68_.CFrame)
+            local v69_ = v68_.Position
+            local v70_ = string.format("%d, %d, %d", math.floor(v69_.X + 0.5), math.floor(v69_.Y + 0.5), math.floor(v69_.Z + 0.5))
+            PosisiSekarang:SetDesc(v70_)
+            setclipboard(tostring(v68_.CFrame))
+            SaveSettings()
+        else
+            warn("HumanoidRootPart tidak ditemukan!")
+        end
+    end
+})
+v64_:AddDropdown("FarmMetode", {
+    Title = "Select Farm Metode",
+    Values = {
+        "Fast",
+        "Normal",
+        "Legit"
+    },
+    Multi = false,
+    Default = _G.Settings.Main["Farm Mode"]
+})
+v_u_62_.FarmMetode:OnChanged(function()
+    _G.Settings.Main["Farm Mode"] = v_u_62_.FarmMetode.Value
+    SaveSettings()
+end)
+v64_:AddDropdown("FarmModePosition", {
+    Title = "Select Position",
+    Values = {
+        "Safe Position",
+        "Current Position",
+        "Saved Position"
+    },
+    Multi = false,
+    Default = _G.Settings.Main["Farm Mode Position"]
+})
+v_u_62_.FarmModePosition:OnChanged(function()
+    _G.Settings.Main["Farm Mode Position"] = v_u_62_.FarmModePosition.Value
+    SaveSettings()
+end)
+local v71_ = v61_.Main:AddSection("[ World Event ]")
+Raid = v71_:AddParagraph({
+    Title = "Raid Status",
+    Content = ""
+})
+CursedShip = v71_:AddParagraph({
+    Title = "Cursed Ship Status",
+    Content = ""
+})
+FightingStyle = v71_:AddParagraph({
+    Title = "Fighting Style",
+    Content = ""
+})
+spawn(function()
+    while task.wait() do
+        pcall(function()
+            if game:GetService("Workspace").Map:FindFirstChild("HellIsland") then
+                Raid:SetDesc("Active")
+            else
+                Raid:SetDesc("Not Active")
+            end
+            if game:GetService("Workspace").Map:FindFirstChild("CursedShip") then
+                CursedShip:SetDesc("Spawned")
+            else
+                CursedShip:SetDesc("Not Spawned")
+            end
+            if game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBlackLeg",true) then
+                FightingStyle:SetDesc("Available")
+            else
+                FightingStyle:SetDesc("Not Available")
+            end
+        end)
+    end
+end)
+local v95_ = v61_.Main:AddSection("[ Main ]")
+v95_:AddToggle("EnableFarm", {
+    Title = "Enable Auto Farm",
+    Default = _G.Settings.Main["Enable Auto Farm"]
+})
+v_u_62_.EnableFarm:OnChanged(function()
+    _G.Settings.Main["Enable Auto Farm"] = v_u_62_.EnableFarm.Value
+    SaveSettings()
+end)
+v_u_62_.FarmModePosition:OnChanged(function()
+    _G.Settings.Main["Farm Mode Position"] = v_u_62_.FarmModePosition.Value
+    SaveSettings()
+end)
+v95_:AddToggle("WaterWalk", {
+    Title = "Enable WaterWalk",
+    Default = _G.Settings.Main["Enable WaterWalk"]
+})
+v_u_62_.WaterWalk:OnChanged(function()
+    _G.Settings.Main["Enable WaterWalk"] = v_u_62_.WaterWalk.Value
+    SaveSettings()
+end)
+local v306_ = v61_.Teleport:AddSection("[ Location ]")
+v306_:AddDropdown("TPLocation", {
+    Title = "Select Location to Teleport",
+    Values = v44_,
+    Multi = false,
+    Default = _G.Settings.Main.SelectIslandTP
+})
+v_u_62_.TPLocation:OnChanged(function()
+    _G.Settings.Main.SelectIslandTP = v_u_62_.TPLocation.Value
+    SaveSettings()
+end)
+v306_:AddButton({
+    Title = "Teleport to selected location",
+    Description = "",
+    Callback = function()
+        local v307_ = v_u_33_[_G.Settings.Main.SelectIslandTP]
+        if v307_ then
+            TeleportPlayer(v307_)
+        end
+    end
+})
+local v308_ = v61_.Teleport:AddSection("[ Sub-Location ]")
+v308_:AddDropdown("SubLocation", {
+    Title = "Select Sub-Location to Teleport",
+    Values = v52_,
+    Multi = false,
+    Default = _G.Settings.Main.SelectSubTP
+})
+v_u_62_.SubLocation:OnChanged(function()
+    _G.Settings.Main.SelectSubTP = v_u_62_.SubLocation.Value
+    SaveSettings()
+end)
+v308_:AddButton({
+    Title = "Teleport to selected Sub-location",
+    Description = "",
+    Callback = function()
+        local v309_ = v_u_34_[_G.Settings.Main.SelectSubTP]
+        if v309_ then
+            TeleportPlayer(v309_)
+        end
+    end
+})
+local v310_ = v61_.Teleport:AddSection("[ NPC Location ]")
+v310_:AddDropdown("NPCLocation", {
+    Title = "Select NPC Location to Teleport",
+    Values = v56_,
+    Multi = false,
+    Default = _G.Settings.Main.SelectNPCTP
+})
+v_u_62_.NPCLocation:OnChanged(function()
+    _G.Settings.Main.SelectNPCTP = v_u_62_.NPCLocation.Value
+    SaveSettings()
+end)
+v310_:AddButton({
+    Title = "Teleport to selected NPC Location",
+    Description = "",
+    Callback = function()
+        local v311_ = v_u_32_[_G.Settings.Main.SelectNPCTP]
+        if v311_ then
+            TeleportPlayer(v311_)
+        end
+    end
+})
+local v312_ = v61_.Teleport:AddSection("[ Boss Location ]")
+v312_:AddDropdown("BossLocation", {
+    Title = "Select Boss Location to Teleport",
+    Values = v40_,
+    Multi = false,
+    Default = _G.Settings.Main.SelectBossTP
+})
+v_u_62_.BossLocation:OnChanged(function()
+    _G.Settings.Main.SelectBossTP = v_u_62_.BossLocation.Value
+    SaveSettings()
+end)
+v312_:AddButton({
+    Title = "Teleport to selected Boss Location",
+    Description = "",
+    Callback = function()
+        local v313_ = v_u_36_[_G.Settings.Main.SelectBossTP]
+        if v313_ then
+            TeleportPlayer(v313_)
+        end
+    end
+})
+local _ = v_u_57_.Options
+v58_:IgnoreThemeSettings()
+v58_:SetIgnoreIndexes({})
+v59_:BuildInterfaceSection(v61_.Settings)
+v59_:BuildConfigSection(v61_.Settings)
+local v316_ = v_u_60_
+v_u_60_.SelectTab(v316_, 1)
+local v317_ = v_u_57_
+v_u_57_.Notify(v317_, {
+    Title = "Vietbun Hub",
+    Content = "The script has been loaded.",
+    Duration = 3
+})
+v59_:LoadAutoloadConfig()
