@@ -44,7 +44,7 @@ local FastAttackToggle = Tab:CreateToggle({
 })
 
 _G.FastAttackStrix_Mode = "Super Fast Attack"
-_G.Fast_Delay = 1e-100
+_G.Fast_Delay = 9e-9
 
 local v21 = game.Players.LocalPlayer
 
@@ -103,10 +103,10 @@ function AttackNoCoolDown()
         local v478 = v477:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterAttack")
         local v479 = v477:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterHit")
         if (# v228 > 0) then
-            v478:FireServer(1e-30)
+            v478:FireServer(9e-9)
             v479:FireServer(v230, v228)
         else
-            task.wait(1e-100)
+            task.wait(9e-9)
         end
     end)
 end
@@ -126,7 +126,7 @@ spawn(function()
         if _G.FastAttackEnabled then
             pcall(function()
                 if _G.FastAttackStrix_Mode == "Super Fast Attack" then
-                    _G.Fast_Delay = 1e-100
+                    _G.Fast_Delay = 9e-9
                 end
             end)
         end
