@@ -1,0 +1,238 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+   Name = "Vietbun Hub [ Premium ]",
+   LoadingTitle = "Vietbun Hub",
+   LoadingSubtitle = "By Vietbun",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "VietbunHub",
+      FileName = "Config"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+   KeySystem = false,
+   KeySettings = {
+      Title = "Vietbun Hub",
+      Subtitle = "Key System",
+      Note = "No key required",
+      FileName = "VietbunKey",
+      SaveKey = true,
+      GrabKeyFromSite = false,
+      Key = {"VietbunHub123"}
+   }
+})
+
+local Tab = Window:CreateTab("Tab Farming", 4483362458)
+
+local Section = Tab:CreateSection("Fast Attack")
+
+local FastAttackToggle = Tab:CreateToggle({
+   Name = "Fast Attack",
+   CurrentValue = false,
+   Flag = "FastAttackToggle",
+   Callback = function(Value)
+      _G.FastAttackEnabled = Value
+      if not Value then
+         wait()
+         Tween(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
+         wait()
+      end
+   end,
+})
+
+_G.FastAttackStrix_Mode = "Super Fast Attack"
+_G.Fast_Delay = 9e-9
+
+local v21 = game.Players.LocalPlayer
+
+function FindEnemiesInRange(v223, v224)
+    local v225 = (v21.Character or v21.CharacterAdded:Wait()):GetPivot().Position
+    local v226 = nil
+    for v471, v472 in ipairs(v224) do
+        if (not v472:GetAttribute("IsBoat") and v472:FindFirstChildOfClass("Humanoid") and (v472.Humanoid.Health > 0)) then
+            local v671 = v472:FindFirstChild("Head")
+            if (v671 and ((v225 - v671.Position).Magnitude <= 60)) then
+                if (v472 ~= v21.Character) then
+                    table.insert(v223, { v472, v671 })
+                    v226 = v671
+                end
+            end
+        end
+    end
+    for v473, v474 in ipairs(game.Players:GetPlayers()) do
+        if (v474.Character and (v474 ~= v21)) then
+            local v672 = v474.Character:FindFirstChild("Head")
+            if (v672 and ((v225 - v672.Position).Magnitude <= 60)) then
+                table.insert(v223, { v474.Character, v672 })
+                v226 = v672
+            end
+        end
+    end
+    return v226
+end
+
+function GetEquippedTool()
+    local v227 = v21.Character
+    if not v227 then
+        return nil
+    end
+    for v475, v476 in ipairs(v227:GetChildren()) do
+        if v476:IsA("Tool") then
+            return v476
+        end
+    end
+    return nil
+end
+
+function AttackNoCoolDown()
+    local v228 = {}
+    local v229 = game:GetService("Workspace").Enemies:GetChildren()
+    local v230 = FindEnemiesInRange(v228, v229)
+    if not v230 then
+        return
+    end
+    local v231 = GetEquippedTool()
+    if not v231 then
+        return
+    end
+    pcall(function()
+        local v477 = game:GetService("ReplicatedStorage")
+        local v478 = v477:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterAttack")
+        local v479 = v477:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterHit")
+        if (# v228 > 0) then
+            v478:FireServer(9e-9)
+            v479:FireServer(v230, v228)
+        else
+            task.wait(9e-9)
+        end
+    end)
+end
+
+spawn(function()
+    while task.wait() do
+        if _G.FastAttackEnabled then
+            pcall(function()
+                AttackNoCoolDown()
+            end)
+        end
+    end
+end)
+
+spawn(function()
+    while wait() do
+        if _G.FastAttackEnabled then
+            pcall(function()
+                if _G.FastAttackStrix_Mode == "Super Fast Attack" then
+                    _G.Fast_Delay = 9e-9
+                end
+            end)
+        end
+    end
+end)
+-- [[ MARU HUB LOGIC - FULL AUTO FARM ]]
+
+local v31 = game:GetService("ReplicatedStorage")
+local v35 = game:GetService("Players").LocalPlayer
+
+-- [ HÀM BAY TWEEN THEO KIỂU MARU ]
+local function MaruTween(v155)
+    local v156 = v35.Character:FindFirstChild("HumanoidRootPart")
+    if not v156 then return end
+    local v157 = (v155.p - v156.Position).Magnitude
+    local v158 = _G.TweenSpeed or 250
+    
+    if v157 <= 10 then
+        v156.CFrame = v155
+    else
+        local v391 = TweenInfo.new(v157 / v158, Enum.EasingStyle.Linear)
+        local v392 = game:GetService("TweenService"):Create(v156, v391, {CFrame = v155})
+        v392:Play()
+    end
+end
+
+-- [ HÀM LẤY NHIỆM VỤ TỰ ĐỘNG (DỮ LIỆU GỐC TỪ MARU) ]
+function GetMaruQuest()
+    local Level = v35.Data.Level.Value
+    local Sea = game.PlaceId
+    local Quest, QuestID, Mob, NPC_Pos
+    
+    -- Đây là ví dụ một vài mốc Sea 1, ông có thể copy thêm từ file marukimp của ông
+    if Level >= 1 and Level < 15 then
+        Quest, QuestID, Mob, NPC_Pos = "BanditQuest1", 1, "Bandit", CFrame.new(1059, 16, 1545)
+    elseif Level >= 15 and Level < 30 then
+        Quest, QuestID, Mob, NPC_Pos = "MonkeyQuest1", 1, "Monkey", CFrame.new(-1598, 35, 153)
+    elseif Level >= 30 and Level < 60 then
+        Quest, QuestID, Mob, NPC_Pos = "GorillaQuest1", 1, "Gorilla", CFrame.new(-1210, 28, -433)
+    -- Logic Sea 2
+    elseif Level >= 700 and Level < 725 then
+        Quest, QuestID, Mob, NPC_Pos = "Area1Quest", 1, "Raider [Lvl. 700]", CFrame.new(-424, 73, 1836)
+    -- Logic Sea 3
+    elseif Level >= 1500 and Level < 1525 then
+        Quest, QuestID, Mob, NPC_Pos = "PiratePortQuest", 1, "Pirate Millionaire", CFrame.new(-290, 15, 5323)
+    end
+    
+    return {Quest = Quest, QuestID = QuestID, Mob = Mob, Pos = NPC_Pos}
+end
+
+-- [ NÚT BẤM AUTO FARM TRÊN GUI ]
+Tabs.Main:AddToggle("AutoFarmMaru", {
+    Title = "Auto Farm Level (Maru Original)",
+    Default = false
+}):OnChanged(function(Value)
+    _G.AutoFarmLevel = Value
+end)
+
+-- [ HỆ THỐNG THỰC THI (CORE) ]
+spawn(function()
+    while task.wait() do
+        if _G.AutoFarmLevel then
+            pcall(function()
+                local Data = GetMaruQuest()
+                
+                -- 1. Nếu chưa có Quest -> Đi nhận
+                if not v35.PlayerGui.Main.Quest.Visible then
+                    MaruTween(Data.Pos)
+                    if (v35.Character.HumanoidRootPart.Position - Data.Pos.p).Magnitude < 15 then
+                        v31.Remotes.CommF_:InvokeServer("StartQuest", Data.Quest, Data.QuestID)
+                    end
+                else
+                    -- 2. Đã có Quest -> Đi tìm quái
+                    local Target = nil
+                    for _, v in pairs(workspace.Enemies:GetChildren()) do
+                        if v.Name == Data.Mob and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                            Target = v
+                            break
+                        end
+                    end
+                    
+                    if Target then
+                        -- Tự cầm vũ khí (Melee)
+                        for _, tool in pairs(v35.Backpack:GetChildren()) do
+                            if tool.ToolTip == "Melee" then
+                                v35.Character.Humanoid:EquipTool(tool)
+                            end
+                        end
+                        
+                        -- LOGIC NÉ SKILL: Bay lơ lửng cách đầu quái 12 units
+                        v35.Character.HumanoidRootPart.CFrame = Target.HumanoidRootPart.CFrame * CFrame.new(0, 12, 0) * CFrame.Angles(math.rad(-90), 0, 0)
+                        
+                        -- GOM QUÁI (BRING MOB)
+                        Target.HumanoidRootPart.CanCollide = false
+                        Target.HumanoidRootPart.Size = Vector3.new(50, 50, 50)
+                        
+                        -- ĐÁNH SIÊU TỐC (VALIDATOR)
+                        v31.Remotes.Validator:FireServer(math.huge)
+                        game:GetService("VirtualUser"):CaptureController()
+                        game:GetService("VirtualUser"):ClickButton1(Vector2.new())
+                    else
+                        -- Đợi quái hồi sinh thì bay lơ lửng ở bãi farm
+                        MaruTween(Data.Pos * CFrame.new(0, 40, 0))
+                    end
+                end
+            end)
+        end
+    end
+end)
