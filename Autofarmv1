@@ -1,0 +1,450 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Window = Rayfield:CreateWindow({
+   Name = "Vietbun Hub [ Premium ]",
+   LoadingTitle = "Vietbun Hub",
+   LoadingSubtitle = "By Vietbun",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "VietbunHub",
+      FileName = "Config"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "noinvitelink",
+      RememberJoins = true
+   },
+   KeySystem = false,
+   KeySettings = {
+      Title = "Vietbun Hub",
+      Subtitle = "Key System",
+      Note = "No key required",
+      FileName = "VietbunKey",
+      SaveKey = true,
+      GrabKeyFromSite = false,
+      Key = {"VietbunHub123"}
+   }
+})
+
+local Tab = Window:CreateTab("Tab Farming", 4483362458)
+
+local Section = Tab:CreateSection("Fast Attack")
+
+local FastAttackToggle = Tab:CreateToggle({
+   Name = "Fast Attack",
+   CurrentValue = false,
+   Flag = "FastAttackToggle",
+   Callback = function(Value)
+      _G.FastAttackEnabled = Value
+      if not Value then
+         wait()
+         Tween(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
+         wait()
+      end
+   end,
+})
+
+_G.FastAttackStrix_Mode = "Super Fast Attack"
+_G.Fast_Delay = 9e-9
+
+local v21 = game.Players.LocalPlayer
+
+function FindEnemiesInRange(v223, v224)
+    local v225 = (v21.Character or v21.CharacterAdded:Wait()):GetPivot().Position
+    local v226 = nil
+    for v471, v472 in ipairs(v224) do
+        if (not v472:GetAttribute("IsBoat") and v472:FindFirstChildOfClass("Humanoid") and (v472.Humanoid.Health > 0)) then
+            local v671 = v472:FindFirstChild("Head")
+            if (v671 and ((v225 - v671.Position).Magnitude <= 60)) then
+                if (v472 ~= v21.Character) then
+                    table.insert(v223, { v472, v671 })
+                    v226 = v671
+                end
+            end
+        end
+    end
+    for v473, v474 in ipairs(game.Players:GetPlayers()) do
+        if (v474.Character and (v474 ~= v21)) then
+            local v672 = v474.Character:FindFirstChild("Head")
+            if (v672 and ((v225 - v672.Position).Magnitude <= 60)) then
+                table.insert(v223, { v474.Character, v672 })
+                v226 = v672
+            end
+        end
+    end
+    return v226
+end
+
+function GetEquippedTool()
+    local v227 = v21.Character
+    if not v227 then
+        return nil
+    end
+    for v475, v476 in ipairs(v227:GetChildren()) do
+        if v476:IsA("Tool") then
+            return v476
+        end
+    end
+    return nil
+end
+
+function AttackNoCoolDown()
+    local v228 = {}
+    local v229 = game:GetService("Workspace").Enemies:GetChildren()
+    local v230 = FindEnemiesInRange(v228, v229)
+    if not v230 then
+        return
+    end
+    local v231 = GetEquippedTool()
+    if not v231 then
+        return
+    end
+    pcall(function()
+        local v477 = game:GetService("ReplicatedStorage")
+        local v478 = v477:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterAttack")
+        local v479 = v477:WaitForChild("Modules"):WaitForChild("Net"):WaitForChild("RE/RegisterHit")
+        if (# v228 > 0) then
+            v478:FireServer(9e-9)
+            v479:FireServer(v230, v228)
+        else
+            task.wait(9e-9)
+        end
+    end)
+end
+
+spawn(function()
+    while task.wait() do
+        if _G.FastAttackEnabled then
+            pcall(function()
+                AttackNoCoolDown()
+            end)
+        end
+    end
+end)
+
+spawn(function()
+    while wait() do
+        if _G.FastAttackEnabled then
+            pcall(function()
+                if _G.FastAttackStrix_Mode == "Super Fast Attack" then
+                    _G.Fast_Delay = 9e-9
+                end
+            end)
+        end
+    end
+end)
+
+-- Thêm Auto Farm Level Section
+local AutoFarmSection = Tab:CreateSection("Auto Farm Level")
+
+-- Select Weapon Dropdown
+local weaponList = {"Melee", "Sword", "Blox Fruit"}
+local SelectWeapon = "Melee"
+
+local weaponDropdown = Tab:CreateDropdown({
+   Name = "Select Weapon",
+   Options = weaponList,
+   CurrentOption = "Melee",
+   Flag = "WeaponSelect",
+   Callback = function(Option)
+      SelectWeapon = Option
+   end,
+})
+
+-- Auto Farm Level Toggle
+local AutoFarmToggle = Tab:CreateToggle({
+   Name = "Auto Farm Level",
+   CurrentValue = false,
+   Flag = "AutoFarmLevel",
+   Callback = function(Value)
+      _G.AutoLevel = Value
+      if not Value then
+         wait()
+         Tween(game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame)
+         wait()
+      end
+   end,
+})
+
+-- Variables cho Auto Farm Level
+_G.AutoLevel = false
+local bringmob = false
+local FarmPos = nil
+local MonFarm = ""
+local Pos = CFrame.new(0, 0, 0)
+
+-- Check Level Function (Từ source bạn cung cấp)
+function CheckLevel()
+    local Level = game:GetService("Players").LocalPlayer.Data.Level.Value
+    local Sea1, Sea2, Sea3 = false, false, false
+    
+    if game.PlaceId == 2753915549 then
+        Sea1 = true
+    elseif game.PlaceId == 4442272183 then
+        Sea2 = true
+    elseif game.PlaceId == 7449423635 then
+        Sea3 = true
+    end
+    
+    if Sea1 then
+        if Level >= 1 and Level <= 9 then
+            Ms = "Bandit"
+            NameQuest = "BanditQuest1"
+            QuestLv = 1
+            NameMon = "Bandit"
+            CFrameQ = CFrame.new(1060.94, 16.46, 1547.78)
+        elseif Level >= 10 and Level <= 14 then
+            Ms = "Monkey"
+            NameQuest = "JungleQuest"
+            QuestLv = 1
+            NameMon = "Monkey"
+            CFrameQ = CFrame.new(-1601.66, 36.85, 153.39)
+        elseif Level >= 15 and Level <= 29 then
+            Ms = "Gorilla"
+            NameQuest = "JungleQuest"
+            QuestLv = 2
+            NameMon = "Gorilla"
+            CFrameQ = CFrame.new(-1601.66, 36.85, 153.39)
+        end
+    end
+    
+    if Sea2 then
+        if Level >= 700 and Level <= 724 then
+            Ms = "Raider"
+            NameQuest = "Area1Quest"
+            QuestLv = 1
+            NameMon = "Raider"
+            CFrameQ = CFrame.new(-427.73, 73.00, 1835.94)
+        elseif Level >= 725 and Level <= 774 then
+            Ms = "Mercenary"
+            NameQuest = "Area1Quest"
+            QuestLv = 2
+            NameMon = "Mercenary"
+            CFrameQ = CFrame.new(-427.73, 73.00, 1835.94)
+        end
+    end
+    
+    if Sea3 then
+        if Level >= 1500 and Level <= 1524 then
+            Ms = "Pirate Millionaire"
+            NameQuest = "PiratePortQuest"
+            QuestLv = 1
+            NameMon = "Pirate Millionaire"
+            CFrameQ = CFrame.new(-450.10, 107.68, 5950.73)
+        elseif Level >= 1525 and Level <= 1574 then
+            Ms = "Pistol Billionaire"
+            NameQuest = "PiratePortQuest"
+            QuestLv = 2
+            NameMon = "Pistol Billionaire"
+            CFrameQ = CFrame.new(-450.10, 107.68, 5950.73)
+        end
+    end
+end
+
+-- Equip Tool Function
+function EquipTool(ToolName)
+    if game.Players.LocalPlayer.Backpack:FindFirstChild(ToolName) then
+        local tool = game.Players.LocalPlayer.Backpack:FindFirstChild(ToolName)
+        game.Players.LocalPlayer.Character.Humanoid:EquipTool(tool)
+    end
+end
+
+-- Auto Haki Function
+function AutoHaki()
+    if not game:GetService("Players").LocalPlayer.Character:FindFirstChild("HasBuso") then
+        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Buso")
+    end
+end
+
+-- Tween Function
+function Tween(CFrame)
+    local Distance = (CFrame.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+    local Speed = 300
+    
+    if Distance > 2000 then
+        Speed = 350
+    end
+    
+    local Info = TweenInfo.new(Distance/Speed, Enum.EasingStyle.Linear)
+    local TweenAnimation = game:GetService("TweenService"):Create(
+        game.Players.LocalPlayer.Character.HumanoidRootPart,
+        Info,
+        {CFrame = CFrame}
+    )
+    
+    TweenAnimation:Play()
+    
+    if _G.StopTween then
+        TweenAnimation:Cancel()
+    end
+    
+    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame
+end
+
+-- Auto Farm Level Main Loop
+spawn(function()
+    while task.wait() do
+        if _G.AutoLevel then
+            pcall(function()
+                CheckLevel()
+                
+                local QuestText = game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Container.QuestTitle.Title.Text
+                local QuestVisible = game:GetService("Players").LocalPlayer.PlayerGui.Main.Quest.Visible
+                
+                if not string.find(QuestText, NameMon) or not QuestVisible then
+                    game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("AbandonQuest")
+                    Tween(CFrameQ)
+                    
+                    if (CFrameQ.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 5 then
+                        game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("StartQuest", NameQuest, QuestLv)
+                    end
+                    
+                elseif string.find(QuestText, NameMon) or QuestVisible then
+                    
+                    for _, Enemy in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                        if Enemy:FindFirstChild("Humanoid") and 
+                           Enemy:FindFirstChild("HumanoidRootPart") and 
+                           Enemy.Humanoid.Health > 0 and 
+                           Enemy.Name == Ms then
+                           
+                            repeat
+                                task.wait(_G.Fast_Delay)
+                                
+                                if _G.FastAttackEnabled then
+                                    AttackNoCoolDown()
+                                end
+                                
+                                bringmob = true
+                                AutoHaki()
+                                EquipTool(SelectWeapon)
+                                
+                                local TargetCFrame = Enemy.HumanoidRootPart.CFrame
+                                Tween(TargetCFrame * CFrame.new(0, 5, -5))
+                                
+                                Enemy.HumanoidRootPart.Size = Vector3.new(60, 60, 60)
+                                Enemy.HumanoidRootPart.Transparency = 0.9
+                                Enemy.Humanoid.JumpPower = 0
+                                Enemy.Humanoid.WalkSpeed = 0
+                                Enemy.HumanoidRootPart.CanCollide = false
+                                
+                                FarmPos = Enemy.HumanoidRootPart.CFrame
+                                MonFarm = Enemy.Name
+                                
+                            until not _G.AutoLevel or 
+                                  not Enemy.Parent or 
+                                  Enemy.Humanoid.Health <= 0 or 
+                                  not game:GetService("Workspace").Enemies:FindFirstChild(Enemy.Name) or
+                                  game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible == false
+                                  
+                            bringmob = false
+                        end
+                    end
+                    
+                    for _, Spawn in pairs(game:GetService("Workspace")['_WorldOrigin'].EnemySpawns:GetChildren()) do
+                        if string.find(Spawn.Name, NameMon) then
+                            if (game.Players.LocalPlayer.Character.HumanoidRootPart.Position - Spawn.Position).Magnitude >= 10 then
+                                Tween(Spawn.CFrame)
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- No Clip để farm mượt hơn
+spawn(function()
+    while task.wait() do
+        pcall(function()
+            if _G.AutoLevel then
+                for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        v.CanCollide = false
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- Thêm Auto Bring Mob Toggle
+local BringMobToggle = Tab:CreateToggle({
+   Name = "Auto Bring Mob",
+   CurrentValue = false,
+   Flag = "AutoBringMob",
+   Callback = function(Value)
+      bringmob = Value
+   end,
+})
+
+-- Thêm Select Monster Dropdown
+local monsterList = {}
+if game.PlaceId == 2753915549 then
+    monsterList = {"Bandit", "Monkey", "Gorilla", "Pirate", "Brute"}
+elseif game.PlaceId == 4442272183 then
+    monsterList = {"Raider", "Mercenary", "Swan Pirate"}
+elseif game.PlaceId == 7449423635 then
+    monsterList = {"Pirate Millionaire", "Pistol Billionaire"}
+end
+
+local monsterDropdown = Tab:CreateDropdown({
+   Name = "Select Monster (Manual)",
+   Options = monsterList,
+   CurrentOption = monsterList[1],
+   Flag = "MonsterSelect",
+   Callback = function(Option)
+      Ms = Option
+   end,
+})
+
+-- Thêm Status Display
+local StatusSection = Tab:CreateSection("Farm Status")
+
+local CurrentMonsterLabel = Tab:CreateLabel("Current Monster: None")
+local QuestStatusLabel = Tab:CreateLabel("Quest Status: Not Active")
+local EnemyCountLabel = Tab:CreateLabel("Enemies in Range: 0")
+
+spawn(function()
+    while task.wait(1) do
+        if _G.AutoLevel then
+            CurrentMonsterLabel:SetText("Current Monster: " .. (Ms or "None"))
+            
+            if game.Players.LocalPlayer.PlayerGui.Main.Quest.Visible then
+                QuestStatusLabel:SetText("Quest Status: Active")
+            else
+                QuestStatusLabel:SetText("Quest Status: Not Active")
+            end
+            
+            local enemyCount = 0
+            for _, enemy in pairs(game:GetService("Workspace").Enemies:GetChildren()) do
+                if enemy.Name == Ms then
+                    enemyCount = enemyCount + 1
+                end
+            end
+            EnemyCountLabel:SetText("Enemies in Range: " .. enemyCount)
+        else
+            CurrentMonsterLabel:SetText("Current Monster: None")
+            QuestStatusLabel:SetText("Quest Status: Not Active")
+            EnemyCountLabel:SetText("Enemies in Range: 0")
+        end
+    end
+end)
+
+-- Thêm Keybind để bật/tắt Auto Farm
+Tab:CreateKeybind({
+   Name = "Toggle Auto Farm",
+   CurrentKeybind = "F",
+   HoldToInteract = false,
+   Flag = "ToggleAutoFarmKeybind",
+   Callback = function()
+      _G.AutoLevel = not _G.AutoLevel
+      AutoFarmToggle:Set(not AutoFarmToggle.CurrentValue)
+   end,
+})
+
+-- Thông báo khi load
+Rayfield:Notify({
+   Title = "Vietbun Hub",
+   Content = "Auto Farm Level System Loaded!",
+   Duration = 3,
+})
