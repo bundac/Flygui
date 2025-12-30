@@ -247,7 +247,7 @@ function CheckLevel()
         CFrameQ = CFrame.new(897, 7, 4389)
         CFrameMon = CFrame.new(1547, 14, 4382)
 
-    -- ⛔ TIẾP TỤC VIẾT DÀI RA Y HỆT BANANAHUB (Snow, Marine, Sky, Prison...)
+    
     end
 end
     elseif Lv <= 99 then
@@ -799,3 +799,4 @@ end
         NameMon = "Candy Rebel"
         CFrameQ = CFrame.new(231, 24, -12776)
         CFrameMon = CFrame.new(400, 24, -13000)
+end
