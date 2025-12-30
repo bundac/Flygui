@@ -132,62 +132,16 @@ spawn(function()
         end
     end
 end)
-Main:AddToggle({
+  _G.AutoFarmLevel = false
+
+MainTab:CreateToggle({
     Name = "Auto Farm Level",
-    Default = false,
-    Callback = function(v)
-        _G.AutoFarmLevel = v
-        StopTween(_G.AutoFarmLevel)
-    end
+    CurrentValue = false,
+    Flag = "AutoFarmLevel",
+    Callback = function(Value)
+        _G.AutoFarmLevel = Value
+    end,
 })
-task.spawn(function()
-    while task.wait() do
-        if not _G.AutoFarmLevel then continue end
-        pcall(function()
-
-            CheckLevel()
-            local QuestUI = game.Players.LocalPlayer.PlayerGui.Main.Quest
-
-            if not QuestUI.Visible
-            or not string.find(QuestUI.Container.QuestTitle.Title.Text, NameMon) then
-                game.ReplicatedStorage.Remotes.CommF_:InvokeServer("AbandonQuest")
-                Tween(CFrameQ)
-                if (CFrameQ.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 5 then
-                    game.ReplicatedStorage.Remotes.CommF_:InvokeServer(
-                        "StartQuest",
-                        NameQuest,
-                        QuestLv
-                    )
-                end
-                return
-            end
-
-            for _, v in pairs(workspace.Enemies:GetChildren()) do
-                if v.Name == Ms
-                and v:FindFirstChild("Humanoid")
-                and v.Humanoid.Health > 0 then
-
-                    repeat task.wait(_G.Fast_Delay)
-                        AutoHaki()
-                        EquipTool(SelectWeapon)
-                        AttackNoCoolDown()
-                        bringmob = true
-
-                        Tween(v.HumanoidRootPart.CFrame * Pos)
-
-                        v.HumanoidRootPart.Size = Vector3.new(60,60,60)
-                        v.HumanoidRootPart.Transparency = 1
-                        v.HumanoidRootPart.CanCollide = false
-                        v.Humanoid.JumpPower = 0
-                        v.Humanoid.WalkSpeed = 0
-                    until not _G.AutoFarmLevel
-                    or v.Humanoid.Health <= 0
-                    or not v.Parent
-                end
-            end
-        end)
-    end
-end)
 function CheckLevel()
     local Lv = game.Players.LocalPlayer.Data.Level.Value
 
@@ -247,7 +201,7 @@ function CheckLevel()
         CFrameQ = CFrame.new(897, 7, 4389)
         CFrameMon = CFrame.new(1547, 14, 4382)
 
-    
+    -- ⛔ TIẾP TỤC VIẾT DÀI RA Y HỆT BANANAHUB (Snow, Marine, Sky, Prison...)
     end
 end
     elseif Lv <= 99 then
@@ -799,4 +753,67 @@ end
         NameMon = "Candy Rebel"
         CFrameQ = CFrame.new(231, 24, -12776)
         CFrameMon = CFrame.new(400, 24, -13000)
-end
+    elseif Lv <= 2524 then
+        Ms = "Candy Pirate"
+        NameQuest = "CandyQuest1"
+        QuestLv = 1
+        NameMon = "Candy Pirate"
+        CFrameQ = CFrame.new(-1148, 13, -14452)
+        CFrameMon = CFrame.new(-1350, 25, -14580)
+
+    elseif Lv <= 2550 then
+        Ms = "Snow Demon"
+        NameQuest = "CandyQuest1"
+        QuestLv = 2
+        NameMon = "Snow Demon"
+        CFrameQ = CFrame.new(-1148, 13, -14452)
+        CFrameMon = CFrame.new(-950, 60, -14720)
+task.spawn(function()
+    while task.wait() do
+        if not _G.AutoFarmLevel then continue end
+        pcall(function()
+
+            CheckLevel()
+            local QuestUI = game.Players.LocalPlayer.PlayerGui.Main.Quest
+
+            if not QuestUI.Visible
+            or not string.find(QuestUI.Container.QuestTitle.Title.Text, NameMon) then
+                game.ReplicatedStorage.Remotes.CommF_:InvokeServer("AbandonQuest")
+                Tween(CFrameQ)
+                if (CFrameQ.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude <= 5 then
+                    game.ReplicatedStorage.Remotes.CommF_:InvokeServer(
+                        "StartQuest",
+                        NameQuest,
+                        QuestLv
+                    )
+                end
+                return
+            end
+
+            for _, v in pairs(workspace.Enemies:GetChildren()) do
+                if v.Name == Ms
+                and v:FindFirstChild("Humanoid")
+                and v.Humanoid.Health > 0 then
+
+                    repeat task.wait(_G.Fast_Delay)
+                        AutoHaki()
+                        EquipTool(SelectWeapon)
+                        AttackNoCoolDown()
+                        bringmob = true
+
+                        Tween(v.HumanoidRootPart.CFrame * Pos)
+
+                        v.HumanoidRootPart.Size = Vector3.new(60,60,60)
+                        v.HumanoidRootPart.Transparency = 1
+                        v.HumanoidRootPart.CanCollide = false
+                        v.Humanoid.JumpPower = 0
+                        v.Humanoid.WalkSpeed = 0
+                    until not _G.AutoFarmLevel
+                    or v.Humanoid.Health <= 0
+                    or not v.Parent
+                end
+            end
+        end)
+    end
+end)
+
