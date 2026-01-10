@@ -1,0 +1,12 @@
+--[[
+ .____                  ________ ___.    _____                           __                
+ |    |    __ _______   \_____  \\_ |___/ ____\_ __  ______ ____ _____ _/  |_  ___________ 
+ |    |   |  |  \__  \   /   |   \| __ \   __\  |  \/  ___// ___\\__  \\   __\/  _ \_  __ \
+ |    |___|  |  // __ \_/    |    \ \_\ \  | |  |  /\___ \\  \___ / __ \|  | (  <_> )  | \/
+ |_______ \____/(____  /\_______  /___  /__| |____//____  >\___  >____  /__|  \____/|__|   
+         \/          \/         \/    \/                \/     \/     \/                   
+          \_Welcome to LuaObfuscator.com   (Alpha 0.10.9) ~  Much Love, Ferib 
+
+]]--
+
+local v0=(58765 -42601) + ((((5286 -(378 + 1044)) + (860747 -496646)) -(786246 -511850)) -67600) + ((191520 -(367 + 201)) -110638) ;v0=v0 + ((1040 -(214 + 713)) -(26 + 17 + 50)) + ((192 + 1027) -((996 -(282 + 595)) + (2634 -(1523 + 114)))) ;local v1=1081497 + 121959 ;local v2=1754148 -523677 ;local v3=8024546 -(68 + 997) ;if (v2>v1) then print("true");end if (((1271 -(226 + 1044)) + v3)>v2) then print("obfuscate the conditions!");end print("Clicking [Strings] will completely hide this string!");do function sieve_of_eratosthenes(v5) local v6=0;local v7;while true do if (v6==(4 -3)) then for v10=119 -(32 + 85) ,math.floor(math.sqrt(v5)) do if v7[v10] then for v13=v10 * v10 ,v5,v10 do v7[v13]=false;end end end return v7;end if (v6==0) then v7={};for v11=1 + 0 ,v5 do v7[v11]=1~=v11 ;end v6=1 + 0 ;end end end local v4=sieve_of_eratosthenes(420);for v8,v9 in pairs(v4) do if v9 then print("Prime found: "   .. v8 );end end end print("How to obfuscate best?");
